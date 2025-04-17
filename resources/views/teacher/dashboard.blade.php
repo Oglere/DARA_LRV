@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{{ asset ('css/std.css') }}">
     <link rel="stylesheet" href="{{ asset ('css/mainpage.css') }}">
     <link rel="stylesheet" href="{{ asset ('css/std_control.css') }}">
+    <link rel="stylesheet" href="{{ asset ('css/svg.css') }}">
 </head>
 <body>
     <main>
@@ -93,7 +94,6 @@
                                 <polyline points="10 17 15 12 10 7" />
                                 <line x1="15" y1="12" x2="3" y2="12" />
                             </svg>
-                            &nbsp;
                             Logout
                         </button>
                     </form>

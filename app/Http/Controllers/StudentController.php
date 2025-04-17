@@ -66,7 +66,6 @@ class StudentController extends Controller
             'co_authors' => 'nullable|string',
             'teacher_id' => 'required|exists:users,user_id',
             'publication_date' => 'nullable|date',
-            'keywords' => 'required|string',
             'citations' => 'nullable|string',
             'file' => 'required|mimes:pdf|max:512000',
             'document_types' => 'required',
@@ -78,7 +77,6 @@ class StudentController extends Controller
             'teacher_id.required' => 'Please select a teacher.',
             'teacher_id.exists' => 'The selected teacher does not exist.',
             'publication_date.date' => 'The publication date must be a valid date.',
-            'keywords.required' => 'Please enter at least one keyword.',
             'file.required' => 'A PDF file is required.',
             'file.mimes' => 'The file must be a PDF.',
             'file.max' => 'The file size should not exceed 500MB.',
@@ -87,14 +85,12 @@ class StudentController extends Controller
         ]);
     
         $coAuthors = $request->co_authors ? explode(',', $request->co_authors) : [];
-        $keywords = explode(',', $request->keywords);
         $citations = $request->citations ? explode(',', $request->citations) : [];
         $documentTypes = $request->document_types;
     
         $metadata = [
             'abstract' => $request->abstract,
             'publication_date' => $request->publication_date,
-            'keywords' => $keywords
         ];
     
         $fileData = file_get_contents($request->file('file')->getRealPath());
@@ -122,11 +118,6 @@ class StudentController extends Controller
             return abort(400, "Invalid document ID.");
         }
 
-        // Check user role
-        if (Auth::user()->role !== 'Student') {
-            return redirect()->route('/go/login');
-        }
-
         $document = DocumentRepository::where('document_id', $id)
                             ->where('student_id', Auth::id())
                             ->first();
@@ -137,8 +128,10 @@ class StudentController extends Controller
                 : abort(404, 'Document not found.');
         }
 
-        $study_type = is_string($document->study_type) ? json_decode($document->study_type, true) : [];
-        $metadata = is_string($document->metadata) ? json_decode($document->metadata, true) : [];
+        $study_type = is_string($document->study_type)
+            ? json_decode($document->study_type, true)
+            : $document->study_type;
+        $metadata = is_array($document->metadata) ? $document->metadata : json_decode($document->metadata, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             $metadata = [];

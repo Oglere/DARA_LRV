@@ -152,7 +152,6 @@
                         @endforeach
                     </select><br>
                     Publication Date: <input type="date" name="publication_date"><br>
-                    Keywords (comma-separated): <input type="text" name="keywords"><br>
                     Citations (comma-separated): <input type="text" name="citations"><br>
 
                     <div class="container">

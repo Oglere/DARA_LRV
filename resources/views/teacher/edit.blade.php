@@ -28,7 +28,7 @@
                 </div>
 
                 <nav class="nav-links">
-                    <a href="../"> 
+                    <a href="/teacher"> 
                         <svg
                             style="margin-right: 10px;"
                             xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@
 
                         Dashboard
                     </a>
-                    <a href="/dara/teacher/review-studies">
+                    <a href="/teacher/review-studies">
                         <svg
                             style="margin-right: 10px;"
                             xmlns="http://www.w3.org/2000/svg"
@@ -80,26 +80,28 @@
                         <div class="asd3" style="border-bottom: 1px solid grey; width: 150px;"></div>
                     </div>
 
-                    <a href="../../view/logout.php" class="logout-btn">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-log-in"
-                            >
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                            <polyline points="10 17 15 12 10 7" />
-                            <line x1="15" y1="12" x2="3" y2="12" />
-                        </svg>
-
-                        Logout
-                    </a>
+                    <form action="/out" method="POST">
+                        @csrf
+                        <button class="lgt">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="feather feather-log-in"
+                                >
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                <polyline points="10 17 15 12 10 7" />
+                                <line x1="15" y1="12" x2="3" y2="12" />
+                            </svg>
+                            Logout
+                        </button>
+                    </form>
                 </nav> 
             </div>
 

@@ -15,24 +15,20 @@ use App\Http\Controllers\QueryController;
 use App\Http\Controllers\TeacherController;
 
 Route::get('/test', function () {
-    
     return view('test');
 });
-
-Route::get('/', function () {
-    
-    return view('index');
+Route::get('/', function () { 
+    return view('index'); 
 });
 
 Route::get('/results/', [QueryController::class, 'results']);
-Route::post('/results/', [QueryController::class, 'search']);
-
 Route::get('/study/{id}', [QueryController::class, 'pdf_reader']);
 
 Route::get('/go/recovery', [LoginController::class, 'recovery']);
 Route::get('/go/login', [LoginController::class, 'showLoginForm'])->name('login');
+
 Route::post('/go/login', [LoginController::class, 'login']);
-Route::get('/lists', [LoginController::class, 'list']);
+Route::post('/results/', [QueryController::class, 'search']);
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard']);
@@ -68,9 +64,11 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::get('/', [TeacherController::class, 'dashboard']);
     Route::get('/review-studies', [TeacherController::class, 'review']);
     Route::get('/edit', [TeacherController::class, 'edit']);
+    Route::get('/review-studies/{id}', [QueryController::class, 'pdf_reader_teacher']);
 
     Route::post('/editacc/{id}', [AdminCrudController::class, 'editacc']);
     Route::post('/update-acc/{id}', [AdminCrudController::class, 'updateacc']);
+    Route::post('/review-studies/request/{id}', [TeacherController::class, 'request']);
 });
 
 Route::post('/out', [LoginController::class, 'logout']);

@@ -37,17 +37,35 @@ class TeacherController extends Controller
     public function review(){
         $teacher_id = Auth::id(); // Get currently logged-in teacher ID
 
-        $documents = DocumentRepository::with('student')  // Assuming relation is defined
-            ->where('status', 'Pending')
+        $documents = DocumentRepository::with('student')
             ->where('teacher_id', $teacher_id)
             ->get();
 
+        $reviewed = $documents->filter(function ($doc) {
+            return !empty($doc->date_reviewed);
+        });
+    
         return view('teacher.review-studies', [
             'documents' => $documents,
+            'reviewed' => $reviewed,
         ]);
     }
 
     public function edit(){
         return view('teacher.edit');
+    }
+
+    public function request(Request $request, $id) {
+        $document = DocumentRepository::where('document_id', '=', $id)->first();
+
+        if ($document) {
+            $document->status = $request->input('action');
+            $document->date_reviewed = now();
+            $document->save();
+
+            return redirect()->back()->with('success', 'Document status updated successfully.');
+        }
+
+        return redirect()->back()->with('error', 'Document not found.');
     }
 }

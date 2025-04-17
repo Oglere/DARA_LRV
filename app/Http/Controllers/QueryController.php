@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Hamcrest\Core\IsNot;
 use Illuminate\Http\Request;
 use App\Models\DocumentRepository;
+use Illuminate\Support\Facades\Auth;
 
 class QueryController extends Controller
 {
@@ -45,7 +47,6 @@ class QueryController extends Controller
                 }
             });
         }
-        
 
         $results = $query->get();
 
@@ -56,7 +57,9 @@ class QueryController extends Controller
         $document = DocumentRepository::findOrFail($id);
 
         $metadata = is_array($document->metadata) ? $document->metadata : json_decode($document->metadata, true);
-        $category = json_decode($document->study_type);
+        $category = is_string($document->study_type)
+            ? json_decode($document->study_type, true)
+            : $document->study_type;
 
         return view('go.pdf-reader', [
             'title' => $document->title,
@@ -65,6 +68,43 @@ class QueryController extends Controller
             'keywords' => $metadata['keywords'] ?? [],
             'studytype' => $category,
             'pdf_data' => $document->file,  // base64 data or raw pdf file content
+        ]);
+    }
+
+    public function pdf_reader_teacher($id) {
+        $documentdata = DocumentRepository::findOrFail($id);
+        if (!filter_var($id, FILTER_VALIDATE_INT)) {
+            return abort(400, "Invalid document ID.");
+        }
+
+        $document = DocumentRepository::where('document_id', $id)
+                            ->where('teacher_id', Auth::id())
+                            ->first();
+
+        if (empty($document->date_reviewed)) {
+            $document->date_reviewed = now();
+            $document->save();
+        }
+
+        if (!$document) {
+            return DocumentRepository::where('document_id', $id)->exists()
+                ? back()->with('error', 'Document not yours.')
+                : abort(404, 'Document not found.');
+        }
+
+        $metadata = is_array($document->metadata) ? $document->metadata : json_decode($document->metadata, true);
+        $study_type = is_string($document->study_type)
+            ? json_decode($document->study_type, true)
+            : $document->study_type;
+
+        return view('teacher.pdf-reader', [
+            'title' => $document->title,
+            'publication_date' => $metadata['publication_date'] ?? 'No Date',
+            'keywords' => $metadata['keywords'] ?? [],
+            'document' => $document,
+            'pdf_data' => base64_encode($document->file),
+            'abstract' => $metadata['abstract'],
+            'study_type' => $study_type,
         ]);
     }
 }

@@ -14,14 +14,6 @@
                 <h2><?= htmlspecialchars($title) ?></h2>
                 <p style="text-align: justify"><strong>Abstract:</strong> <?= $abstract ?></p>
                 <p><strong>Publication Date:</strong> <?= $publication_date ?></p>
-                <p><strong>Keywords: </strong> 
-                    <?php 
-                        if (is_array($keywords) && !empty($keywords)) {
-                            echo implode(", ", $keywords) . ".";
-                        } else {
-                            echo "No keywords available.";
-                        }
-                    ?>
                 <p><strong>Study Type:</strong> <?= implode(', ', $studytype) ?></p> <!-- Fixed variable name -->
                     
                 </p>
