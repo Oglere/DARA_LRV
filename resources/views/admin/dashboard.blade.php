@@ -1,7 +1,7 @@
-
 <?php 
-use Carbon\Carbon;
+    use Carbon\Carbon;  
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -233,41 +233,15 @@ use Carbon\Carbon;
                             </div>
                         </div>
                     </div>
-                    <div class="chart-container">
-                        <h2>Role Distribution Overview</h2>
-                        <canvas id="studyStatusChart" width="300" height="300" style="display: block; box-sizing: border-box; height: 300px; width: 300px;"></canvas>
-                        <div id="legend" style="margin-top: 10px; display: flex;">
-                            <div style="display: flex; align-items: center; margin-right: 15px;">
-                                <div style="
-                                    width: 20px;
-                                    height: 20px;
-                                    background-color: rgb(13, 110, 253);
-                                    margin-right: 10px;
-                                    border-radius: 4px;">
-                                </div>
-                                <span style="font-size: 14px;">Admin</span>
+                    <div class="chart-container" style="width: 300px" >
+                        <h2>Study Distribution Overview</h2>
+                        <canvas id="studyStatusChart" width="300" height="300" style="display: block; box-sizing: border-box;"></canvas>
+                        <div id="legend" style="margin-top: 10px; width: auto; display: flex;">
+                            <div class="xd3left" style="width: 100%">
+
                             </div>
-                        
-                            <div style="display: flex; align-items: center; margin-right: 15px;">
-                                <div style="
-                                    width: 20px;
-                                    height: 20px;
-                                    background-color: #dc3545;
-                                    margin-right: 10px;
-                                    border-radius: 4px;">
-                                </div>
-                                <span style="font-size: 14px;">Student</span>
-                            </div>
-                        
-                            <div style="display: flex; align-items: center; margin-right: 15px;">
-                                <div style="
-                                    width: 20px;
-                                    height: 20px;
-                                    background-color: #FFCE56;
-                                    margin-right: 10px;
-                                    border-radius: 4px;">
-                                </div>
-                                <span style="font-size: 14px;">Teacher</span>
+                            <div class="xd3right" style="width: 100%">
+                                
                             </div>
                         </div>
                     </div>
@@ -318,21 +292,25 @@ use Carbon\Carbon;
 
     <script>
         // ✅ 1. PIE CHART - Role Distribution
-        const userRolesData = @json($roleDistribution);
+        const userRolesData = @json($studyDistribution);
         const studyStatusCtx = document.getElementById('studyStatusChart').getContext('2d');
+        const half = Math.ceil(userRolesData.length / 2);
+        const leftData = userRolesData.slice(0, half);  // First half
+        const rightData = userRolesData.slice(half);    // Second half
 
         const studyStatusChart = new Chart(studyStatusCtx, {
             type: 'pie',
             data: {
-                labels: userRolesData.map(item => item.role),
+                labels: userRolesData.map(item => item.status),
                 datasets: [{
-                    label: 'User Count',
+                    label: 'Study Count',
                     data: userRolesData.map(item => item.count),
-                    backgroundColor: ['rgb(13, 110, 253)', '#dc3545', '#FFCE56', '#8AFF64', '#FF9F40']
+                    backgroundColor: ['black', '#28a745', 'grey', '#FF9F40', '#0d6efd', '#dc3545']
                 }]
             },
             options: {
-                responsive: true,
+                responsive: false,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
                     datalabels: {
@@ -341,23 +319,43 @@ use Carbon\Carbon;
                         font: {
                             weight: 'bold',
                             size: 14
-                        }
+                        },
+                        anchor: 'center',   
+                        align: 'center',    
+                        offset: 0,        
+                        borderRadius: 4,
+                        backgroundColor: '#00000088', 
+                        padding: 6
                     }
                 }
             }
         });
 
-        const legendContainer = document.getElementById('legend');
-        legendContainer.innerHTML = userRolesData.map((item, index) => `
-            <div style="display: flex; align-items: center; margin-right: 15px;">
+        const leftLegendContainer = document.querySelector('.xd3left');
+        leftLegendContainer.innerHTML = leftData.map((item, index) => `
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
                 <div style="
                     width: 20px;
                     height: 20px;
-                    background-color: ${studyStatusChart.data.datasets[0].backgroundColor[index]};
+                    background-color: ${studyStatusChart.data.datasets[0].backgroundColor[index]}; /* Using the background color from the chart */
                     margin-right: 10px;
                     border-radius: 4px;">
                 </div>
-                <span style="font-size: 14px;">${item.role}</span>
+                <span style="font-size: 14px;">${item.status}</span>
+            </div>
+        `).join('');
+
+        const rightLegendContainer = document.querySelector('.xd3right');
+        rightLegendContainer.innerHTML = rightData.map((item, index) => `
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="
+                    width: 20px;
+                    height: 20px;
+                    background-color: ${studyStatusChart.data.datasets[0].backgroundColor[index + half]}; /* Offset the color for the second half */
+                    margin-right: 10px;
+                    border-radius: 4px;">
+                </div>
+                <span style="font-size: 14px;">${item.status}</span>
             </div>
         `).join('');
 

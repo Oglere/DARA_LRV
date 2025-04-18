@@ -43,9 +43,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/delete/{id}', [AdminCrudController::class, 'delete']);
     Route::post('/recovery/{id}', [AdminCrudController::class, 'recover']);
     Route::post('/done/{id}', [AdminCrudController::class, 'markAsDone']);
-
     Route::post('/editacc/{id}', [AdminCrudController::class, 'editacc']);
     Route::post('/update-acc/{id}', [AdminCrudController::class, 'updateacc']);
+
+    Route::post('/storage/{id}/1', [AdminCrudController::class, 'one']);
+    Route::post('/storage/{id}/2', [AdminCrudController::class, 'two']);
+    Route::post('/storage/{id}/3', [AdminCrudController::class, 'three']);
 });
 
 Route::prefix('student')->middleware(['auth', 'student'])->group(function () {
@@ -58,6 +61,7 @@ Route::prefix('student')->middleware(['auth', 'student'])->group(function () {
     Route::post('/editacc/{id}', [AdminCrudController::class, 'editacc']);
     Route::post('/update-acc/{id}', [AdminCrudController::class, 'updateacc']);
     Route::post('/submit', [StudentController::class, 'submit']);
+    Route::post('/pdf-reader/request', [StudentController::class, 'request']);
 });
 
 Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {

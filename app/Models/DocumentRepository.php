@@ -23,11 +23,9 @@ class DocumentRepository extends Model
         'file',
         'status',
         'date_submitted',
-        'study_type',
-        'date_reviewed',      
+        'date_reviewed',   
+        'study_type',   
         'abandoned_date',     
-        'recovered_date',     
-        'lost_date' 
     ];
 
     protected $casts = [

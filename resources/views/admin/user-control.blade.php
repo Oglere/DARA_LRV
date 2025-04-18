@@ -1,4 +1,8 @@
-
+@if ($errors->getBag('createErrors')->any())
+    <script>
+        alert(`{!! implode('\n', $errors->getBag('createErrors')->all()) !!}`);
+    </script>
+@endif
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,6 +14,7 @@
         <link rel="stylesheet" href="{{ asset('CSS/mainpage.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/std_control.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/usercontrol.css') }}">
+        <link rel="stylesheet" href="{{ asset('../../css/yey.css') }}">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body style="overflow: hidden; height: calc(100% - 61px)">
@@ -116,8 +121,24 @@
                 </div>
 
                 <div class="right" style="overflow: auto; padding: 20px;">
+
+                @if (session('success'))
+                    <div class="frbg" style="height: auto;">
+                        <div class="notif" style="display: flex; flex-direction: column; align-items: center;">
+                            <div class="imghere">
+                                <img src="../../imgs/verified-account.png" alt="" />
+                            </div>
+                            <div
+                                class="teksto"
+                                style="display: flex; margin-top: -16px; text-align: center"
+                            >
+                            </div>
+                        </div>
+                    </div>
+                @endif
                     
-                    <div id="add-user-form" class="hidden">
+                <div id="add-user-form" class="{{ $errors->getBag('createErrors')->any() ? '' : 'hidden' }}">
+
                         <h2>Add New User</h2>
                         <form id="user-form" method="post" action="create">
                             @csrf
@@ -159,7 +180,7 @@
                             </div>
                         </form>
                     </div>
-                    <div class="overlay hidden"></div>
+                    <div class="overlay {{ $errors->getBag('createErrors')->any() ? '' : 'hidden' }}"></div>
 
                     <div id="user-list">
                         <div class="actions">
@@ -245,44 +266,84 @@
                             </form>
                         </div>
                     </div>
+    
+                        @if ($errors->getBag('editErrors')->any())
+                            <div id="edit-modal" class="tree">
+                            <form method="POST" action="" id="edit-user-form" class="asdasd" data-user-id="USER_ID_PLACEHOLDER">
+                                @csrf
+                                <input type="hidden" id="edit-user_id" name="user_id" required>
 
-                    <div id="edit-modal" class="hidden tree">
-                        <form method="POST" action="" id="edit-user-form" class="asdasd" data-user-id="USER_ID_PLACEHOLDER">
-                            @csrf
-                            <input type="hidden" id="edit-user_id" name="user_id" required>
+                                <label style="margin-bottom: 5px;" for="edit-first_name">First Name</label>
+                                <input type="text" id="edit-fname" name="first_name" required>
 
-                            <label style="margin-bottom: 5px;" for="edit-first_name">First Name</label>
-                            <input type="text" id="edit-fname" name="first_name" required>
+                                <label style="margin-bottom: 5px;" for="edit-last_name">Last Name</label>
+                                <input type="text" id="edit-lname" name="last_name" required>
 
-                            <label style="margin-bottom: 5px;" for="edit-last_name">Last Name</label>
-                            <input type="text" id="edit-lname" name="last_name" required>
+                                <label style="margin-bottom: 5px;" for="edit-email">Email</label>
+                                <input type="email" id="edit-email" name="email" required>
 
-                            <label style="margin-bottom: 5px;" for="edit-email">Email</label>
-                            <input type="email" id="edit-email" name="email" required>
+                                <label style="margin-bottom: 5px;" for="edit-password_hash">Password (leave blank to keep current password)</label>
+                                <input id="edit-password" name="password_hash">
 
-                            <label style="margin-bottom: 5px;" for="edit-password_hash">Password (leave blank to keep current password)</label>
-                            <input id="edit-password" name="password_hash">
+                                <label style="margin-bottom: 5px;" for="edit-role">Role</label>
+                                <select id="edit-role" name="role" required>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                                    @endforeach
+                                </select>
 
-                            <label style="margin-bottom: 5px;" for="edit-role">Role</label>
-                            <select id="edit-role" name="role" required>
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role }}">{{ ucfirst($role) }}</option>
-                                @endforeach
-                            </select>
+                                <label for="edit-status" style="margin-bottom: 5px;">Status</label>
 
-                            <label for="edit-status" style="margin-bottom: 5px;">Status</label>
+                                <select id="edit-status" name="status" required>
+                                    @foreach ($statuses as $status)
+                                        <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                                    @endforeach
+                                </select>
 
-                            <select id="edit-status" name="status" required>
-                                @foreach ($statuses as $status)
-                                    <option value="{{ $status }}">{{ ucfirst($status) }}</option>
-                                @endforeach
-                            </select>
+                                <div class="botoning">
+                                    <button type="submit" class="sab">Save</button>
+                                    <button type="button" id="cancel-edit" class="nac">Cancel</button>
+                                </div>
+                            </form>
+                        @else
+                            <div id="edit-modal" class="hidden tree">
+                            <form method="POST" action="" id="edit-user-form" class="asdasd" data-user-id="USER_ID_PLACEHOLDER">
+                                @csrf
+                                <input type="hidden" id="edit-user_id" name="user_id" required>
 
-                            <div class="botoning">
-                                <button type="submit" class="sab">Save</button>
-                                <button type="button" id="cancel-edit" class="nac">Cancel</button>
-                            </div>
-                        </form>
+                                <label style="margin-bottom: 5px;" for="edit-first_name">First Name</label>
+                                <input type="text" id="edit-fname" name="first_name" required>
+
+                                <label style="margin-bottom: 5px;" for="edit-last_name">Last Name</label>
+                                <input type="text" id="edit-lname" name="last_name" required>
+
+                                <label style="margin-bottom: 5px;" for="edit-email">Email</label>
+                                <input type="email" id="edit-email" name="email" required>
+
+                                <label style="margin-bottom: 5px;" for="edit-password_hash">Password (leave blank to keep current password)</label>
+                                <input id="edit-password" name="password_hash">
+
+                                <label style="margin-bottom: 5px;" for="edit-role">Role</label>
+                                <select id="edit-role" name="role" required>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+                                    @endforeach
+                                </select>
+
+                                <label for="edit-status" style="margin-bottom: 5px;">Status</label>
+
+                                <select id="edit-status" name="status" required>
+                                    @foreach ($statuses as $status)
+                                        <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                                    @endforeach
+                                </select>
+
+                                <div class="botoning">
+                                    <button type="submit" class="sab">Save</button>
+                                    <button type="button" id="cancel-edit" class="nac">Cancel</button>
+                                </div>
+                            </form>
+                        @endif
                     </div>
                 </div>
 
@@ -301,5 +362,47 @@
         form.action = "/edit/" + userId;
         form.submit();
     }
+
+    @if (session('success'))
+        document.addEventListener('DOMContentLoaded', function() {
+            const frbg = document.querySelector('.frbg');
+
+            frbg.style.visibility = 'hidden';
+            setTimeout(() => {
+                frbg.classList.add('fade-in');
+                frbg.style.visibility = 'visible';
+            }, 100);
+
+            setTimeout(() => {
+                frbg.classList.remove('fade-in');
+                frbg.classList.add('fade-out');
+            }, 2000);
+
+            setTimeout(() => {
+                frbg.style.visibility = 'hidden';
+                frbg.classList.remove('fade-out');
+            }, 2500);
+        });
+    @endif
+
+    @if ($errors->getBag('editErrors')->any() && session('editUserId'))
+        let errorMessages = @json($errors->getBag('editErrors')->all()).join('\n');
+        alert(errorMessages);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const userId = '{{ session('editUserId') }}';
+            const editBtn = document.querySelector(`.edit-btn[data-id="${userId}"]`);
+            if (editBtn) {
+                editBtn.click(); 
+            }
+
+            document.getElementById('edit-user_id').value = userId;
+            document.getElementById('edit-fname').value = '{{ old('first_name') }}';
+            document.getElementById('edit-lname').value = '{{ old('last_name') }}';
+            document.getElementById('edit-email').value = '{{ old('email') }}';
+            document.getElementById('edit-role').value = '{{ old('role') }}';
+            document.getElementById('edit-status').value = '{{ old('status') }}';
+        });
+    @endif
 </script>
 

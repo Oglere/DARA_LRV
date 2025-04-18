@@ -150,7 +150,7 @@
                                     </button>
                                     <div class="dropdown hidden">
                                         @if (!$reviewed->contains('document_id', $doc->document_id) && $doc->status === 'Pending')
-                                            You haven't reviewed this file.
+                                            You haven't reviewed this file. 
                                         @else
                                             @if ($doc->status !== 'Pending')
                                                 <form action="review-studies/request/{{ $doc->document_id }}" method="POST">

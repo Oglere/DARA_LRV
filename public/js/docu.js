@@ -32,12 +32,56 @@ function toggleVisibility(elementId, show) {
     });
   }
   
-  document.querySelector("tbody").addEventListener("click", (event) => {
-    if (event.target.classList.contains("delete-btn")) {
-      handleDelete(event);
-    } else if (event.target.classList.contains("edit-btn")) {
-      handleEdit(event);
-    }
+  document.addEventListener("DOMContentLoaded", () => {
+      const modal = document.getElementById("delete-modal");
+      const form = document.getElementById("delete-user-form");
+      const userIdInput = document.getElementById("delete-user-id");
+      const modalText = modal.querySelector("p");
+      const modalTitle = modal.querySelector("h2");
+      const cancelBtn = document.getElementById("cancel-delete");
+
+      const confirmBtn = document.getElementById("confirm-delete");
+
+      // Dynamically handle the modal open per button type
+      document.querySelectorAll(".permdelt, .recover, .delete").forEach(button => {
+          button.addEventListener("click", (event) => {
+              handleDelete(event);
+              const docId = button.dataset.id;
+
+              // Change modal text and form action depending on button type
+              if (button.classList.contains("permdelt")) {
+                actionType = "permdelt";
+                modalText.textContent = "Are you sure you want to permanently delete this document?";
+                modalTitle.textContent = "Confirm Permanent Deletion";
+                modalTitle.style.color = "black";
+                form.action = `/admin/storage/${docId}/3`;
+              } 
+              
+              else if (button.classList.contains("recover")) {
+                actionType = "recover";
+                modalText.textContent = "Recover this document?";
+                modalTitle.textContent = "Confirm Recover";
+                modalTitle.style.color = "Orange";
+                form.action = `/admin/storage/${docId}/2`;
+              } 
+              
+              else if (button.classList.contains("delete")) {
+                actionType = "delete";
+                modalTitle.textContent = "Confirm Deletion";
+                modalText.textContent = "Are you sure you want to delete this document?";
+                modalTitle.style.color = "#8e0404";
+                form.action = `/admin/storage/${docId}/1`;
+              }
+
+              userIdInput.value = docId;
+              modal.classList.remove("hidden");
+          });
+      });
+
+      // Cancel the modal
+      cancelBtn.addEventListener("click", () => {
+          modal.classList.add("hidden");
+      });
   });
   
   function handleDelete(event) {

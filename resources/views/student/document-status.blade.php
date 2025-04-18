@@ -2,12 +2,12 @@
 <head>
     <meta charset="UTF-8">
     <title>DARA - Student Dashboard</title>
-    <link rel="stylesheet" href="{{ asset('../../css/mainpage.css') }}">
-    <link rel="stylesheet" href="{{ asset('../../css/std.css') }}">
-    <link rel="stylesheet" href="{{ asset('../../css/std_status.css') }}"> 
-    <link rel="stylesheet" href="{{ asset('../../css/svg.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mainpage.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/std.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/std_status.css') }}"> 
+    <link rel="stylesheet" href="{{ asset('css/svg.css') }}">
 </head>
-<body>
+<body style="height: calc(100% - 61px)" >
     <main>
         <header> 
             <div class="ahh">
@@ -159,219 +159,157 @@
                 </style>
 
                 <div class="status-container">
-                    <h1 style="font-weight: lighter;">STATUS OF SUBMITTED DOCUMENTS</h1>
+                    <h1 style="font-weight: lighter; text-align: center;">STATUS OF SUBMITTED DOCUMENTS</h1>
                     
                     @if ($documents->count() > 0)
                         <ul>
                             @foreach ($documents as $doc)
-                                <li style="
-                                    @if($doc->status == 'Approved') background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(105,255,78,1) 0%, rgba(149,254,255,1) 100%); border: none;
-                                    @elseif($doc->status == 'Pending') background: linear-gradient(90deg, rgba(78,102,255,0.5) 0%, rgba(149,254,255,1) 100%);
-                                    @elseif($doc->status == 'Abandoned') border: solid 1px black;
-                                    @endif
-                                ">
-                                    <div class="okok">
-                                        <span class="status {{ strtolower(str_replace(' ', '-', $doc->status)) }}">
-                                            @if ($doc->status === "Approved")
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="35"
-                                                    height="35"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="url(#gradient)"
-                                                    stroke-width="2"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    class="feather feather-check-square"
-                                                >
-                                                    <defs>
-                                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                            <stop offset="0%" style="stop-color: rgba(105,255,78,1); stop-opacity: 1" />
-                                                            <stop offset="100%" style="stop-color: rgba(149, 254, 255, 1); stop-opacity: 1" />
-                                                        </linearGradient>
-                                                    </defs>
-                                                    <polyline points="9 11 12 14 22 4"></polyline>
-                                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                                                </svg>
+                                @if ($doc->status !== 'LostDoc')
+                                    <li style="
+                                        @if($doc->status == 'Approved') 
+                                            background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(105,255,78,1) 0%, rgba(149,254,255,1) 100%); border: none;
+                                        @elseif($doc->status == 'Pending') 
+                                            background: linear-gradient(90deg, rgba(149,254,255,1) 0%, rgba(78,102,255,0.5) 100%);
+                                        @elseif($doc->status == 'Abandoned') 
+                                            border: solid 1px black;
+                                        @endif
+                                    ">
+                                        <div class="okok">
+                                            
 
-                                            @elseif ($doc->status === "Pending")
-                                                <svg xmlns="http://www.w3.org/2000/svg" 
-                                                    width="35" 
-                                                    height="35" 
-                                                    viewBox="0 0 24 24" 
-                                                    fill="none" 
-                                                    stroke="currentColor" 
-                                                    stroke-width="2" 
-                                                    stroke-linecap="round" 
-                                                    stroke-linejoin="round" 
-                                                    class="feather feather-loader">
-                                                    <line x1="12" y1="2" x2="12" y2="6" />
-                                                    <line x1="12" y1="18" x2="12" y2="22" />
-                                                    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-                                                    <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-                                                    <line x1="2" y1="12" x2="6" y2="12" />
-                                                    <line x1="18" y1="12" x2="22" y2="12" />
-                                                    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
-                                                    <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
-                                                </svg>
-
-                                            @elseif ($doc->status === "Needs Revision")
-                                                <svg xmlns="http://www.w3.org/2000/svg" 
-                                                    width="35" height="35" 
-                                                    viewBox="0 0 24 24" 
-                                                    fill="none" 
-                                                    stroke="currentColor" 
-                                                    stroke-width="2" 
-                                                    stroke-linecap="round" 
-                                                    stroke-linejoin="round" 
-                                                    class="feather feather-info">
-                                                    <circle cx="12" cy="12" r="10" />
-                                                    <line x1="12" y1="16" x2="12" y2="12" />
-                                                    <line x1="12" y1="8" x2="12.01" y2="8" />
-                                                </svg>
-
-                                            @elseif ($doc->status === "Rejected")
-                                                <svg xmlns="http://www.w3.org/2000/svg" 
-                                                    width="35" 
-                                                    height="35" 
-                                                    viewBox="0 0 24 24" 
-                                                    fill="none" 
-                                                    stroke="currentColor" 
-                                                    stroke-width="2" 
-                                                    stroke-linecap="round" 
-                                                    stroke-linejoin="round" 
-                                                    class="feather feather-x">
-                                                    <line x1="18" y1="6" x2="6" y2="18" />
-                                                    <line x1="6" y1="6" x2="18" y2="18" />
-                                                </svg>
-
-                                            @elseif ($doc->status === "Abandoned")
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="35"
-                                                    height="35"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    stroke-width="2"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    class="feather feather-trash"
-                                                    >
-                                                    <polyline points="3 6 5 6 21 6" />
-                                                    <path
-                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                                                    />
-                                                </svg>
-
-                                            @endif
-                                        </span>
-
-                                        <div class="continents">
-                                            <div class="top">
-                                                <span class="title" style="color: {{ $doc->status !== 'Abandoned' ? '#2E5256' : 'black' }};">
-                                                    @if ($doc->status !== "Abandoned")
-                                                        <a href="pdf-reader/{{ $doc->document_id }}">{{ $doc->title }}</a>
-                                                    @else
-                                                        {{ $doc->title }}
-                                                    @endif
-
-                                                    ({{ $doc->status }})
-                                                </span>
-                                            </div>
-                                            <div class="bottom">
-                                                <div class="wtf">
-                                                    <span class="date" style="color: {{ $doc->status !== 'Abandoned' ? '#2E5256' : 'black' }};">
-                                                        Date submitted: &nbsp;
+                                            <div class="continents">
+                                                <div class="top" >
+                                                    <span class="title" style="display: flex; align-items: center; color: {{ $doc->status !== 'Abandoned' ? '#2E5256' : 'black' }};">
+                                                        
+                                                            @if ($doc->status !== "Abandoned")
+                                                                <a href="pdf-reader/{{ $doc->document_id }}">{{ $doc->title }}</a>
+                                                            @else
+                                                                {{ $doc->title }}
+                                                            @endif
+                                                            <div style="font-size: small; font-weight: lighter; margin-left: auto;" >
+                                                                ({{ $doc->status }})
+                                                            </div>
                                                     </span>
-                                                    <div class="datete" style="color: {{ $doc->status !== 'Abandoned' ? '#2E5256' : 'black' }};">
-                                                        {{ \Carbon\Carbon::parse($doc->date_submitted)->format('M d, Y') }} at {{ \Carbon\Carbon::parse($doc->date_submitted)->format('h:i A') }}
-                                                    </div>
- 
-                                                    @if ($doc->status == "Approved")
-                                                        <span class="date" style="margin-left: 20px; color: #2E5256;">Date approved: &nbsp;</span>
-                                                        <div class="datete" style="color: #2E5256;">
-                                                            {{ \Carbon\Carbon::parse($doc->date_reviewed)->format('M d, Y') }} at {{ \Carbon\Carbon::parse($doc->date_reviewed)->format('h:i A') }}
-                                                        </div>
-                                                    @elseif ($doc->status == "Abandoned")
-                                                        <span class="date" style="margin-left: 20px; color: black;">Date Abandoned: </span>
-                                                        <div class="datete" style="color: black;">
-                                                            {{ \Carbon\Carbon::parse($doc->abandoned_date)->format('M d, Y') }} at {{ \Carbon\Carbon::parse($doc->abandoned_date)->format('h:i A') }}
-                                                        </div>
-                                                    @endif
                                                 </div>
+                                                <div class="bottom">
+                                                    <div class="wtf">
+                                                        <span class="date" style="color: {{ $doc->status !== 'Abandoned' ? '#2E5256' : 'black' }};">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                                        </span>
+                                                        <div class="datete" style="font-size: small; font-weight: lighter; color: {{ $doc->status !== 'Abandoned' ? '#2E5256' : 'black' }};">
+                                                            {{ \Carbon\Carbon::parse($doc->date_submitted)->format('M d, Y') }} at {{ \Carbon\Carbon::parse($doc->date_submitted)->format('h:i A') }}
+                                                        </div>
+    
+                                                        @if ($doc->status == "Approved")
+                                                            <span class="date" style="font-size: small; font-weight: lighter; margin-left: 20px; color: #2E5256;">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                                            </span>
+                                                            <div class="datete" style="font-size: small; font-weight: lighter; color: #2E5256;">
+                                                                {{ \Carbon\Carbon::parse($doc->date_reviewed)->format('M d, Y') }} at {{ \Carbon\Carbon::parse($doc->date_reviewed)->format('h:i A') }}
+                                                            </div>
+                                                        @elseif ($doc->status == "Abandoned")
+                                                            <span class="date" style="font-size: small; font-weight: lighter; margin-left: 20px; color: black;">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8e0404" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                                            </span>
+                                                            <div class="datete" style="font-size: small; font-weight: lighter; color: #8e0404;">
+                                                                {{ \Carbon\Carbon::parse($doc->abandoned_date)->format('M d, Y') }} at {{ \Carbon\Carbon::parse($doc->abandoned_date)->format('h:i A') }}
+                                                            </div>
+                                                        @endif
+                                                        @if (!$reviewed->contains($doc->document_id) && $doc->status === 'Pending')
+                                                            <div class="read" style="padding-right: 35px">
+                                                                @if (!empty($doc->date_reviewed))
+                                                                    {{ \Carbon\Carbon::parse($doc->date_reviewed)->format('M d, Y') }}
+                                                                    at
+                                                                    {{ \Carbon\Carbon::parse($doc->date_reviewed)->format('h:i A') }}
+                                                                    
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                        class="feather feather-eye">
+                                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                                        <circle cx="12" cy="12" r="3"/>
+                                                                    </svg>
 
-                                                <div class="actions">
-                                                    @if ($doc->status == "Pending")
-                                                        <button class="btn abandon" onclick="openModal('abandonModal', {{ $doc->document_id }})">
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                width="15"
-                                                                height="15"
-                                                                viewBox="0 0 24 24"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                stroke-width="2"
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                class="feather feather-trash"
-                                                                >
-                                                                <polyline points="3 6 5 6 21 6" />
-                                                                <path
-                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                                                                />
-                                                            </svg>
-                                                        </button>
+                                                                @else
+                                                                    <p style="font-size: small; font-weight: lighter; margin: 0; text-align: right;">Not yet read by {{ $doc->teacher->last_name }}</p>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye-off"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                                                @endif
+                                                            </div>
+                                                        @endif
 
-                                                    @elseif ($doc->status == "Abandoned")
-                                                        <button class="btn recover" onclick="openModal('recoverModal', {{ $doc->document_id }})">
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                width="15"
-                                                                height="15"
-                                                                viewBox="0 0 24 24"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                stroke-width="2"
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                class="feather feather-refresh-cw"
-                                                                >
-                                                                <polyline points="23 4 23 10 17 10" />
-                                                                <polyline points="1 20 1 14 7 14" />
-                                                                <path
-                                                                    d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
-                                                                />
-                                                            </svg>
-                                                        </button>
+                                                    </div>
 
-                                                        <button class="btn removeperm" onclick="openModal('removepermModal', {{ $doc->document_id }})">
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                width="15"
-                                                                height="15"
-                                                                viewBox="0 0 24 24"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                stroke-width="2"
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                class="feather feather-trash"
-                                                                >
-                                                                <polyline points="3 6 5 6 21 6" />
-                                                                <path
-                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                                                                />
-                                                            </svg>
-                                                        </button>
+                                                    <div class="actions">
+                                                        @if ($doc->status == "Pending")
+                                                            <button class="btn abandon" onclick="openModal('abandonModal', {{ $doc->document_id }})">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width="15"
+                                                                    height="15"
+                                                                    viewBox="0 0 24 24"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    stroke-width="2"
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    class="feather feather-trash"
+                                                                    >
+                                                                    <polyline points="3 6 5 6 21 6" />
+                                                                    <path
+                                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                                                                    />
+                                                                </svg>
+                                                            </button>
 
-                                                    @endif
+                                                        @elseif ($doc->status == "Abandoned")
+                                                            <button class="btn recover" onclick="openModal('recoverModal', {{ $doc->document_id }})">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width="15"
+                                                                    height="15"
+                                                                    viewBox="0 0 24 24"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    stroke-width="2"
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    class="feather feather-refresh-cw"
+                                                                    >
+                                                                    <polyline points="23 4 23 10 17 10" />
+                                                                    <polyline points="1 20 1 14 7 14" />
+                                                                    <path
+                                                                        d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+                                                                    />
+                                                                </svg>
+                                                            </button>
+
+                                                            <button class="btn removeperm" onclick="openModal('removepermModal', {{ $doc->document_id }})">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width="15"
+                                                                    height="15"
+                                                                    viewBox="0 0 24 24"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    stroke-width="2"
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    class="feather feather-trash"
+                                                                    >
+                                                                    <polyline points="3 6 5 6 21 6" />
+                                                                    <path
+                                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                                                                    />
+                                                                </svg>
+                                                            </button>
+
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </li>
+                                    </li>
+                                @endif
                             @endforeach
                         </ul>
                     @else
@@ -386,9 +324,10 @@
                         <h2>Are you sure you want to abandon this document?</h2>
                         <p>You can still recover this document later.</p>
                         <div class="modal-actions">
-                            <form action="../../controls/student/document_action.php" method="POST">
+                            <form action="pdf-reader/request" method="POST">
+                                @csrf
                                 <input type="hidden" name="document_id" class="documentIdInput">
-                                <input type="hidden" name="action" value="abandon">
+                                <input type="hidden" name="action" value="Abandoned">
                                 <button type="submit" class="batan confirm">Confirm</button>
                                 <button type="button" class="batan cancel" onclick="closeModal('abandonModal')">Cancel</button>
                             </form>
@@ -400,9 +339,10 @@
                     <div class="modal-content">
                         <h2>Recover this document?</h2>
                         <div class="modal-actions">
-                            <form action="../../controls/student/document_action.php" method="POST">
+                            <form action="pdf-reader/request" method="POST">
+                                @csrf
                                 <input type="hidden" name="document_id" class="documentIdInput">
-                                <input type="hidden" name="action" value="recover">
+                                <input type="hidden" name="action" value="Pending">
                                 <button type="submit" class="batan confirm">Confirm</button>
                                 <button type="button" class="batan cancel" onclick="closeModal('recoverModal')">Cancel</button>
                             </form>
@@ -415,9 +355,10 @@
                         <h2>Are you sure you want to delete this document permanently?</h2>
                         <p>You cannot recover this document if you delete it permanently.</p>
                         <div class="modal-actions">
-                            <form action="../../controls/student/document_action.php" method="POST">
+                            <form action="pdf-reader/request" method="POST">
+                                @csrf
                                 <input type="hidden" name="document_id" class="documentIdInput">
-                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="action" value="LostDoc">
                                 <button type="submit" class="batan confirm">Confirm</button>
                                 <button type="button" class="batan cancel" onclick="closeModal('removepermModal')">Cancel</button>
                             </form>
@@ -458,3 +399,28 @@
 </body>
 </html>
 <script src="../js/status.js"></script>
+<script>
+    function openModal(modalId, documentId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = "block";
+
+        // Set the correct document ID in the hidden input inside this modal
+        modal.querySelectorAll('.documentIdInput').forEach(input => {
+            input.value = documentId;
+        });
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = "none";
+    }
+
+    // Optional: Close modals when clicking outside of them
+    window.onclick = function(event) {
+        document.querySelectorAll('.modal').forEach(modal => {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        });
+    }
+</script>

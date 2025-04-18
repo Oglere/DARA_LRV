@@ -20,9 +20,9 @@
     list-style-type: none;
     padding: 0;
     width: 100%;
-    max-width: 700px;
 
     li {
+      width: 100%;
       background-color: #ffffff;
       justify-content: space-between;
       padding: 15px;
@@ -34,10 +34,9 @@
 
       .title {
         margin-left: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         font-weight: bold;
         color: #04128e;
-        padding-right: 100px;
       }
 
       .status {
@@ -157,22 +156,22 @@
 }
 
 .okok {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.top {
-  margin-bottom: 10px;
+  justify-content: left;
 }
 
 .bottom {
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin-left: 20px;
 
   .wtf {
+    width: 100%;
     display: flex;
+    align-items: center;
 
     .date {
       color: #04128e;
@@ -183,4 +182,20 @@
       color: #04128e;
     }
   }
+}
+
+.continents {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.read {
+  gap: 5px;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  font-size: small;
+  font-weight: lighter;
+  align-items: center;
 }

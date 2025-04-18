@@ -48,12 +48,23 @@ class StudentController extends Controller
         return view('student.document-submission', ['teacher' => $teacher]);
     }
 
-    public function status() {
-        $documents = DocumentRepository::where('student_id', Auth::id())->get();
+    public function status(){
         $auth = Auth::id();
 
-        return view('student.document-status', ['documents' => $documents, 'auth' => $auth]);
+        $documents = DocumentRepository::where('student_id', $auth)->get();
+        
+
+        $reviewed = $documents->filter(function ($doc) {
+            return !empty($doc->date_reviewed);
+        })->pluck('document_id');
+
+        return view('student.document-status', [
+            'documents' => $documents,
+            'auth' => $auth,
+            'reviewed' => $reviewed
+        ]);
     }
+
 
     public function edit() {
         return view('student.edit');
@@ -145,5 +156,19 @@ class StudentController extends Controller
             'keywords' => $metadata['keywords'] ?? [],
             'document' => $document
         ]);
+    }
+
+    public function request(Request $request) {
+        $document = DocumentRepository::where('document_id', '=', $request->document_id)->first();
+
+        if ($document) {
+            $document->status = $request->input('action');
+            $document->abandoned_date = now();
+            $document->save();
+
+            return redirect()->back()->with('success', 'Document status updated successfully.');
+        }
+
+        return redirect()->back()->with('error', 'Document not found.');
     }
 }

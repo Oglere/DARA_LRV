@@ -215,9 +215,24 @@
                 </div>
             </div>
         </div>
-
     @endif
 
+@elseif (Auth::user()->role == "Student")
+    <div id="abandonModal" class="modal">
+        <div class="modal-content">
+            <h2>Abandon Document</h2>
+            <p>Are you sure you want to abandon this document? <br> You can still recover this document later.</p>
+            <div class="modal-actions">
+                <form action="request/{{ $document->document_id }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="document_id" id="documentIdInput">
+                    <input type="hidden" name="action" value="LostDoc">
+                    <button type="submit" class="batan confirm">Confirm</button>
+                    <button type="button" class="batan cancel" onclick="closeModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
 @endif
 
 <script>
@@ -275,7 +290,7 @@ const abandonBtn = document.getElementById("abandonBtn");
 const confirmAbandon = document.querySelector(".confirm");
 
 abandonBtn.onclick = () => {
-    const documentId = {{ $document->document_id }}; // Assuming document ID is available in $row
+    const documentId = {{ $document->document_id }};
     document.getElementById("documentIdInput").value = documentId;
     modal.style.display = "block";
 };

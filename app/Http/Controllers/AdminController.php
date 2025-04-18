@@ -34,8 +34,10 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-            $roleDistribution = User::select('role', DB::raw('count(*) as count'))
-            ->groupBy('role')
+        $studyDistribution = DocumentRepository::query()
+            ->select('status', DB::raw('count(*) as count'))
+            ->where('status', '!=', '0')
+            ->groupBy('status')
             ->get();
 
         $studiesPerMonth = DocumentRepository::select(
@@ -55,8 +57,8 @@ class AdminController extends Controller
         $studiesData = DocumentRepository::select(
             DB::raw('MONTH(date_submitted) as month'),
             DB::raw('YEAR(date_submitted) as year'),
-            DB::raw('SUM(CASE WHEN status = "Published" THEN 1 ELSE 0 END) as published'),
-            DB::raw('SUM(CASE WHEN status != "Published" THEN 1 ELSE 0 END) as unpublished')
+            DB::raw('SUM(CASE WHEN status = "Approved" THEN 1 ELSE 0 END) as published'),
+            DB::raw('SUM(CASE WHEN status != "Approved" THEN 1 ELSE 0 END) as unpublished')
         )
         ->where('date_submitted', '>=', Carbon::now()->subMonths(6)->startOfMonth()) 
         ->groupBy('year', 'month')
@@ -85,7 +87,7 @@ class AdminController extends Controller
         return view("admin.dashboard", compact(
             'totalUsers', 'totalMsgs', 'totalStudies',
             'previousMonthStudies', 'percentChange', 'recentUsersOnline',
-            'roleDistribution', 'studiesPerMonth', 'months', 'published', 'unpublished', 'totalSpaceFormatted',
+            'studyDistribution', 'studiesPerMonth', 'months', 'published', 'unpublished', 'totalSpaceFormatted',
         ));
     }
 
@@ -131,7 +133,9 @@ class AdminController extends Controller
     }
     
     public function messages() {
-        $documents = DocumentRepository::all();
+        $documents = DocumentRepository::query()
+            ->where('status', '!=', '0')
+            ->get();
         
         foreach ($documents as $doc) {
             $doc->formatted_size = $this->formatSizeUnits(strlen($doc->file)); // or use OCTET_LENGTH if file is in DB
@@ -170,7 +174,9 @@ class AdminController extends Controller
         $document = DocumentRepository::findOrFail($id);
 
         $metadata = is_array($document->metadata) ? $document->metadata : json_decode($document->metadata, true);
-        $category = json_decode($document->study_type);
+        $category = is_string($document->study_type)
+            ? json_decode($document->study_type, true)
+            : $document->study_type;
 
         return view('admin.pdf-reader', [
             'title' => $document->title,
