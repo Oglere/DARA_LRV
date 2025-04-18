@@ -1,17 +1,10 @@
 <?php
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\LoginController;
-
-// Admin
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminCrudController;
-
-// Student
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\QueryController;
-
-// Teacher
 use App\Http\Controllers\TeacherController;
 
 Route::get('/test', function () {
