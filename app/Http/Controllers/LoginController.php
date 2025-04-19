@@ -6,10 +6,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use Session;
 
 class LoginController extends Controller
-{
+{       
 
 
     public function showLoginForm(){
@@ -23,7 +24,6 @@ class LoginController extends Controller
     }
 
     public function login(Request $request) {
-        
         $incomingFields = $request->validate([
             'usn_login' => 'required',
             'password_hash_login' => 'required'
@@ -40,11 +40,11 @@ class LoginController extends Controller
                 'Admin' => redirect('admin'),
                 'Teacher' => redirect('teacher'),
                 'Student' => redirect('student'),
-                default => back()->withErrors(['Invalid role.'])
+                default => back()->withErrors(['Error' => 'Invalid role'])
             };
             
         } else {
-            return back()->withErrors(['Error']);
+            return back()->withErrors(['Error' => 'Error']);
         }
     
     }
@@ -54,7 +54,7 @@ class LoginController extends Controller
             return redirect('/');
         }
 
-        return view('/go/recovery');
+        return view('go.recovery');
     }
 
     public function logout(Request $request)
@@ -63,9 +63,10 @@ class LoginController extends Controller
         if ($user) {
             $user->update(['last_login' => now()]);
         }
-
-        auth()->logout();
-        return redirect('/go/login');
+        auth::logout();
+        Session::flush();
+        Redirect::back();
+        return redirect::to('/go/login');
     }
 
 

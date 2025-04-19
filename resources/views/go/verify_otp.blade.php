@@ -1,10 +1,3 @@
-<style>
-   
-
-</style>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,30 +46,44 @@
 
         <div class="contents">
             <div class="recovery-container">
-                <h2 style="color: #8e0404;">Account Recovery</h2>
+                <h2 style="color: #8e0404;">OTP Sent!</h2>
                 <p class="instructions" style="line-height: normal; color: #8e0404 !important;">
-                    Enter your registered email address to request account recovery. If it exists in our system, you will receive further instructions.
+                    Please enter the six (6) digit code we've sent to your email:
+                    @php
+                        $email = session('recovery_email');
+                    @endphp
+                    <strong> {{ $email }} </strong>
+                    that u input a while ago
                 </p>
-                @error('email')
+                @error('otp')
                     <div class="message error">
                         {{ $message }}
                     </div>
                 @enderror
-
-                <form action="recovery/email" method="POST" class="recovery-form">
+                @error('otp1')
+                    <div class="message error">
+                        <a href="/go/recovery">{{ $message }}</a>
+                    </div>
+                @enderror
+                <form action="verify/otp" method="POST" class="recovery-form">
                     @csrf
-                    <label for="email" class="form-label">Email Address:</label>
+                    <label style="display: flex;" for="email" class="form-label">OTP: 
+                    <div style="margin-left: auto; color: grey;" id="timer">
+                        
+                    </div>
+                </label>
                     <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
+                        type="text" 
+                        id="otp" 
+                        name="otp" 
                         class="form-input" 
-                        placeholder="Enter your email" 
+                        placeholder="Enter the OTP" 
                         required
                     >
-                    <button type="submit" class="submit-btn">Request Recovery</button>
+
+                    <button type="submit" class="submit-btn">Verify OTP</button>
                     <p class="instructions" style="line-height: normal; font-weight: normal; color: #8e0404 !important;">
-                            
+                        
                     </p>
                 </form>
             </div>
@@ -85,4 +92,39 @@
 </body>
 </html>
 <script src="../js/results.js"></script>
+@php
+    $expiresAt = session('timer');
+@endphp
+
+<script>
+    const expiresAt = new Date("{{ \Carbon\Carbon::parse($expiresAt)->toIso8601String() }}").getTime();
+    const now = new Date().getTime();
+    const remainingTime = Math.floor((expiresAt - now) / 1000);
+
+    function startCountdown(durationInSeconds, display) {
+        let timer = durationInSeconds;
+        let interval = setInterval(() => {
+            let minutes = Math.floor(timer / 60);
+            let seconds = timer % 60;
+
+            display.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+
+            if (--timer < 0) {
+                clearInterval(interval);
+                display.textContent = "Expired";
+                display.style.color = "red";
+            }
+        }, 1000);
+    }
+
+    window.onload = function () {
+        const display = document.getElementById('timer');
+        if (remainingTime > 0) {
+            startCountdown(remainingTime, display);
+        } else {
+            display.textContent = "Expired";
+            display.style.color = "red";
+        }
+    };
+</script>
 

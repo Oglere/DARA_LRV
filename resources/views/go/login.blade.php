@@ -48,7 +48,7 @@
                     @if (session('error'))
                         
                     @endif
-                    @if ($errors->any())
+                    @if ($errors->error)
                         <div style="color: red; margin-top: 10px;">
                             @foreach ($errors->all() as $error)
                                 {{ $error }}

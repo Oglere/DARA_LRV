@@ -67,5 +67,8 @@ class Kernel extends HttpKernel
         'teacher' => \App\Http\Middleware\TeacherMiddleware::class, 
         'student' => \App\Http\Middleware\StudentMiddleware::class, 
         'unauthenticated' => \App\Http\Middleware\UnauthenticatedMiddlewareMiddleware::class, 
+        'ensure.recovery' => \App\Http\Middleware\EnsureRecoverySession::class,
+        'prevent-back-history' => \App\Http\Middleware\PreventBackHistoryMiddleware::class,
+        'guest.recovery' => \App\Http\Middleware\RedirectIfAuthenticatedForRecovery::class,
     ];
 }

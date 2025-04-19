@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\OtpController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
@@ -10,20 +12,30 @@ use App\Http\Controllers\TeacherController;
 Route::get('/test', function () {
     return view('test');
 });
-Route::get('/', function () { 
-    return view('index'); 
-});
 
+Route::get('/', [QueryController::class, 'index']);
 Route::get('/results/', [QueryController::class, 'results']);
 Route::get('/study/{id}', [QueryController::class, 'pdf_reader']);
 
-Route::get('/go/recovery', [LoginController::class, 'recovery']);
-Route::get('/go/login', [LoginController::class, 'showLoginForm'])->name('login');
-
-Route::post('/go/login', [LoginController::class, 'login']);
 Route::post('/results/', [QueryController::class, 'search']);
 
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+// D pwede maka access ang mga authenticated diri ha
+Route::get('/go/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/go/recovery', [LoginController::class, 'recovery']); // Email Recovery Page
+
+Route::post('/go/login', [LoginController::class, 'login']);
+Route::post('/out', [LoginController::class, 'logout']);
+
+Route::middleware('ensure.recovery')->group(function () {
+    Route::get('/go/recovery/verify', [OTPController::class, 'recovery']);
+    Route::get('/go/recovery/Change-Password-{email}', [OTPController::class, 'change']);
+    
+    Route::post('/go/recovery/email', [OtpController::class, 'verify']);
+    Route::post('/go/recovery/verify/otp', [OtpController::class, 'otp']);
+    Route::post('/go/recovery/{email}/login', [OtpController::class, 'login']);
+});
+
+Route::prefix('admin')->middleware(['auth', 'admin', 'prevent-back-history'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard']);
     Route::get('/user-control', [AdminController::class, 'userControl']);
     Route::get('/edit', [AdminController::class, 'edit']);
@@ -44,7 +56,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/storage/{id}/3', [AdminCrudController::class, 'three']);
 });
 
-Route::prefix('student')->middleware(['auth', 'student'])->group(function () {
+Route::prefix('student')->middleware(['auth', 'student', 'prevent-back-history'])->group(function () {
     Route::get('/', [StudentController::class, 'dashboard']);
     Route::get('/document-submission', [StudentController::class, 'submission']);
     Route::get('/document-status', [StudentController::class, 'status']);
@@ -57,7 +69,7 @@ Route::prefix('student')->middleware(['auth', 'student'])->group(function () {
     Route::post('/pdf-reader/request', [StudentController::class, 'request']);
 });
 
-Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
+Route::prefix('teacher')->middleware(['auth', 'teacher', 'prevent-back-history'])->group(function () {
     Route::get('/', [TeacherController::class, 'dashboard']);
     Route::get('/review-studies', [TeacherController::class, 'review']);
     Route::get('/edit', [TeacherController::class, 'edit']);
@@ -67,5 +79,3 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::post('/update-acc/{id}', [AdminCrudController::class, 'updateacc']);
     Route::post('/review-studies/request/{id}', [TeacherController::class, 'request']);
 });
-
-Route::post('/out', [LoginController::class, 'logout']);

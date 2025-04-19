@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class QueryController extends Controller
 {
+    public function index() {
+        return view('index'); 
+    }
+    
     public function results(Request $request)
     {
         $query = DocumentRepository::query()
