@@ -229,7 +229,7 @@ const abandonBtn = document.getElementById("abandonBtn");
 const confirmAbandon = document.querySelector(".confirm");
 
 abandonBtn.onclick = () => {
-    const documentId = {{ $document->document_id }}; // Assuming document ID is available in $row
+    const documentId = {{ $document->document_id }}; 
     document.getElementById("documentIdInput").value = documentId;
     modal.style.display = "block";
 };

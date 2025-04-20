@@ -144,6 +144,7 @@
                     Title: <input type="text" name="title" required><br>
                     Abstract: <textarea name="abstract" required></textarea><br>
                     Co-Authors (comma-separated): <input type="text" name="co_authors"><br>
+                    Keywords: <input type="text" name="keywords"><br>
                     Teacher: 
                     <select name="teacher_id" required>
                         <option id="teachers" value="empty">Select a Teacher</option>

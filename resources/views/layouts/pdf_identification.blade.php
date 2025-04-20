@@ -147,6 +147,45 @@
         &nbsp;
         Abandon Document
     </button>
+
+@elseif (Auth::user()->role == "Student" && $document->status == "Abandoned")
+    <button class="asd open-modal" data-modal="abandonModal" data-document-id="{{ $document->id }}" 
+        style="
+            background-color: green;
+            border-radius: 49px;
+            position: absolute;
+            margin-top: 140px;
+            margin-right: 40px;
+            width: 175px;
+            font-weight: lighter;
+            height: 40px;
+            display: flex;
+            border: none;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: `rubik`;
+        ">
+        <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            class="feather feather-rotate-ccw"
+        >
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+        </svg>
+        &nbsp;
+        Recover Document
+    </button>
 @endif
 
 @if(Auth::user()->role == "Teacher")
@@ -218,21 +257,39 @@
     @endif
 
 @elseif (Auth::user()->role == "Student")
-    <div id="abandonModal" class="modal">
-        <div class="modal-content">
-            <h2>Abandon Document</h2>
-            <p>Are you sure you want to abandon this document? <br> You can still recover this document later.</p>
-            <div class="modal-actions">
-                <form action="request/{{ $document->document_id }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="document_id" id="documentIdInput">
-                    <input type="hidden" name="action" value="LostDoc">
-                    <button type="submit" class="batan confirm">Confirm</button>
-                    <button type="button" class="batan cancel" onclick="closeModal()">Cancel</button>
-                </form>
+    @if ($document->status === 'Pending')
+        <div id="abandonModal" class="modal">
+            <div class="modal-content">
+                <h2>Abandon Document</h2>
+                <p>Are you sure you want to abandon this document? <br> You can still recover this document later.</p>
+                <div class="modal-actions">
+                    <form action="request" method="POST">
+                        @csrf
+                        <input type="hidden" name="document_id" id="documentIdInput" value="{{ $document->document_id }}">
+                        <input type="hidden" name="action" value="Abandoned">
+                        <button type="submit" class="batan confirm">Confirm</button>
+                        <button type="button" class="batan cancel" onclick="closeModal()">Cancel</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    @elseif ($document->status === 'Abandoned')
+        <div id="abandonModal" class="modal">
+            <div class="modal-content">
+                <h2 style="color: green;">Recover Document</h2>
+                <p>Are you sure you want to recover this document?</p>
+                <div class="modal-actions">
+                    <form action="request" method="POST">
+                        @csrf
+                        <input type="hidden" name="document_id" id="documentIdInput" value="{{ $document->document_id }}">
+                        <input type="hidden" name="action" value="Pending">
+                        <button type="submit" class="batan confirm" style="background-color: green;" >Confirm</button>
+                        <button type="button" class="batan cancel" onclick="closeModal()">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 @endif
 
 <script>

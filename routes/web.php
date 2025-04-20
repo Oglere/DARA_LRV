@@ -19,16 +19,17 @@ Route::get('/study/{id}', [QueryController::class, 'pdf_reader']);
 
 Route::post('/results/', [QueryController::class, 'search']);
 
-// D pwede maka access ang mga authenticated diri ha
-Route::get('/go/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::get('/go/recovery', [LoginController::class, 'recovery']); // Email Recovery Page
+Route::middleware(['prevent-back-history'])->group(function () {
+    Route::get('/go/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/go/login', [LoginController::class, 'login']);
+});
 
-Route::post('/go/login', [LoginController::class, 'login']);
+Route::get('/go/recovery', [LoginController::class, 'recovery'])->name('recovery');
+
 Route::post('/out', [LoginController::class, 'logout']);
 
-Route::middleware('ensure.recovery')->group(function () {
+Route::middleware(['ensure.recovery', 'prevent-back-history'])->group(function () {
     Route::get('/go/recovery/verify', [OTPController::class, 'recovery']);
-    Route::get('/go/recovery/Change-Password-{email}', [OTPController::class, 'change']);
     
     Route::post('/go/recovery/email', [OtpController::class, 'verify']);
     Route::post('/go/recovery/verify/otp', [OtpController::class, 'otp']);

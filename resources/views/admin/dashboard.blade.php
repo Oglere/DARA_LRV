@@ -333,12 +333,13 @@
 
         const leftLegendContainer = document.querySelector('.xd3left');
         leftLegendContainer.innerHTML = leftData.map((item, index) => `
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; margin-bottom: 10px; flex-direction: row-reverse">
                 <div style="
                     width: 20px;
                     height: 20px;
                     background-color: ${studyStatusChart.data.datasets[0].backgroundColor[index]}; /* Using the background color from the chart */
                     margin-right: 10px;
+                    margin-left: 10px;
                     border-radius: 4px;">
                 </div>
                 <span style="font-size: 14px;">${item.status}</span>

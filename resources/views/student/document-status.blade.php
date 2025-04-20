@@ -215,7 +215,7 @@
                                                                 {{ \Carbon\Carbon::parse($doc->abandoned_date)->format('M d, Y') }} at {{ \Carbon\Carbon::parse($doc->abandoned_date)->format('h:i A') }}
                                                             </div>
                                                         @endif
-                                                        @if (!$reviewed->contains($doc->document_id) && $doc->status === 'Pending')
+                                                        @if ($doc->status === 'Pending')
                                                             <div class="read" style="padding-right: 35px">
                                                                 @if (!empty($doc->date_reviewed))
                                                                     {{ \Carbon\Carbon::parse($doc->date_reviewed)->format('M d, Y') }}
@@ -337,13 +337,13 @@
 
                 <div id="recoverModal" class="modal">
                     <div class="modal-content">
-                        <h2>Recover this document?</h2>
+                        <h2 style="color: green;">Recover this document?</h2>
                         <div class="modal-actions">
                             <form action="pdf-reader/request" method="POST">
                                 @csrf
                                 <input type="hidden" name="document_id" class="documentIdInput">
                                 <input type="hidden" name="action" value="Pending">
-                                <button type="submit" class="batan confirm">Confirm</button>
+                                <button style="background-color: green;" type="submit" class="batan confirm">Confirm</button>
                                 <button type="button" class="batan cancel" onclick="closeModal('recoverModal')">Cancel</button>
                             </form>
                         </div>

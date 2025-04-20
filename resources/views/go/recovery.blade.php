@@ -1,9 +1,13 @@
-<style>
-   
-
-</style>
-
-
+<script>
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    };
+</script>
 
 <!DOCTYPE html>
 <html lang="en">

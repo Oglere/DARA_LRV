@@ -16,34 +16,34 @@ class QueryController extends Controller
     public function results(Request $request)
     {
         $query = DocumentRepository::query()
-            ->select('document_id', 'student_id', 'title', 'authors', 'study_type')
-            ->selectRaw("JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.publication_date')) as publication_year")
+            ->select(
+                'document_id',
+                'student_id',
+                'title',
+                'authors',
+                'study_type'
+            )
+            ->selectRaw("YEAR(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.publication_date'))) as publication_year")
             ->selectRaw("JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.keywords')) as keywords")
             ->join('users', 'document_repository.student_id', '=', 'users.user_id')
             ->addSelect('users.last_name')
             ->where('document_repository.status', '=', 'Approved');
 
-        // Search in title or metadata
         if ($request->filled('search')) {
-            $search = $request->input('search');
+            $search = strtolower($request->input('search'));
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('metadata', 'LIKE', "%{$search}%");
+                $q->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"])
+                ->orWhereRaw('LOWER(metadata) LIKE ?', ["%{$search}%"]);
             });
         }
 
-        // Year Range
         if ($request->filled('from-year') && $request->filled('to-year')) {
             $from = $request->input('from-year');
-            $to = $request->input('to-year') + 1;
-
-            $query->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.publication_date')) BETWEEN ? AND ?", [$from, $to]);
+            $to = $request->input('to-year');
+            $query->whereRaw("YEAR(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.publication_date'))) BETWEEN ? AND ?", [$from, $to]);
         }
 
-        // Study Type Filter
         $selectedTypes = $request->input('document_types', []);
-        
-        // Only filter if not all types selected
         if (!empty($selectedTypes) && count($selectedTypes) < 5) {
             $query->where(function($q) use ($selectedTypes) {
                 foreach ($selectedTypes as $type) {
@@ -54,8 +54,27 @@ class QueryController extends Controller
 
         $results = $query->get();
 
+        $results->transform(function ($item) {
+            $keywords = json_decode($item->keywords, true);
+            if (!is_array($keywords)) {
+                $keywords = explode(',', $item->keywords);
+            }
+            $item->keywords = array_map('trim', $keywords);
+
+            if (is_string($item->study_type)) {
+                $type = json_decode($item->study_type, true);
+                if (!is_array($type)) {
+                    $type = explode(',', $item->study_type);
+                }
+                $item->study_type = array_map('trim', $type);
+            }
+
+            return $item;
+        });
+
         return view('go.results', compact('results'));
     }
+
 
     public function pdf_reader($id) {
         $document = DocumentRepository::findOrFail($id);

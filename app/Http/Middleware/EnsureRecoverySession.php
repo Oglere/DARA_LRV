@@ -16,10 +16,18 @@ class EnsureRecoverySession
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!session()->has('recovery_email')) {
-            return redirect()->route('login')->withErrors(['otp' => 'Access denied or session expired.']);
+        if (auth()->check()) {
+            $role = auth()->user()->role;
+
+            return match ($role) {
+                'Admin' => redirect('admin'),
+                'Teacher' => redirect('teacher'),
+                'Student' => redirect('student'),
+                default => back()->withErrors(['error' => 'Invalid role.'])
+            };
         }
 
         return $next($request);
     }
+
 }

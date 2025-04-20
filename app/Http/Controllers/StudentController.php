@@ -51,9 +51,8 @@ class StudentController extends Controller
     public function status(){
         $auth = Auth::id();
 
-        $documents = DocumentRepository::where('student_id', $auth)->get();
+        $documents = DocumentRepository::where('student_id', '=',$auth)->get();
         
-
         $reviewed = $documents->filter(function ($doc) {
             return !empty($doc->date_reviewed);
         })->pluck('document_id');
@@ -75,6 +74,7 @@ class StudentController extends Controller
             'title' => 'required|min:3',
             'abstract' => 'required',
             'co_authors' => 'nullable|string',
+            'keywords' => 'nullable|string',
             'teacher_id' => 'required|exists:users,user_id',
             'publication_date' => 'nullable|date',
             'citations' => 'nullable|string',
@@ -96,10 +96,12 @@ class StudentController extends Controller
         ]);
     
         $coAuthors = $request->co_authors ? explode(',', $request->co_authors) : [];
+        $keywords = $request->keywords ? explode(',', $request->keywords) : [];
         $citations = $request->citations ? explode(',', $request->citations) : [];
         $documentTypes = $request->document_types;
     
         $metadata = [
+            'keywords' => $request->keywords,
             'abstract' => $request->abstract,
             'publication_date' => $request->publication_date,
         ];
@@ -142,6 +144,7 @@ class StudentController extends Controller
         $study_type = is_string($document->study_type)
             ? json_decode($document->study_type, true)
             : $document->study_type;
+
         $metadata = is_array($document->metadata) ? $document->metadata : json_decode($document->metadata, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {

@@ -21,7 +21,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        // Redirect to login with error if not an admin
         return redirect('/go/login')->withErrors(['Access denied. Only admins can access this page.']);
     }
 }

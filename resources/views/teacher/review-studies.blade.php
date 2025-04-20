@@ -23,7 +23,7 @@
         <div class="main" style="height: calc(100% - 61px)">
             <div class="left">
                 <div class="profile">
-                    <h2> {{ auth()->user()->first_name }} </h2> <!-- Display student's username -->
+                    <h2> {{ auth()->user()->first_name }} </h2> 
                     
                 </div>
 
@@ -109,9 +109,9 @@
                 <div class="clol">
                     <div class="nh">
                         <input type="text" id="search-bar" placeholder="Search studies by name or title.." oninput="filterUsers()">
-                        <div class="aridiri">
-                            <button class="filter-btn btn btn-primary" data-role="all">All</button>
-                            <button class="filter-btn btn btn-secondary" data-role="Pending">Pending</button>
+                        <div class="aridiri" >
+                            <button class="filter-btn btn btn-secondary" data-role="all">All</button>
+                            <button class="filter-btn btn btn-primary" data-role="Pending">Pending</button>
                             <button class="filter-btn btn btn-secondary" data-role="Approved">Approved</button>
                             <button class="filter-btn btn btn-secondary" data-role="Needs Revision">Needs Revision</button>
                             <button class="filter-btn btn btn-secondary" data-role="Rejected">Rejected</button>

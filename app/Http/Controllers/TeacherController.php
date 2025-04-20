@@ -39,6 +39,7 @@ class TeacherController extends Controller
 
         $documents = DocumentRepository::with('student')
             ->where('teacher_id', $teacher_id)
+            ->where('status', '!=', '0')
             ->get();
 
         $reviewed = $documents->filter(function ($doc) {
