@@ -4,6 +4,7 @@
   display: flex;
 
   .left {
+    height: 100vh;
     overflow: auto;
     width: 210px;
     display: flex;

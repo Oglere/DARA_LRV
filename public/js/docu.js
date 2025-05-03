@@ -54,6 +54,7 @@ function toggleVisibility(elementId, show) {
                 modalText.textContent = "Are you sure you want to permanently delete this document?";
                 modalTitle.textContent = "Confirm Permanent Deletion";
                 modalTitle.style.color = "black";
+                modalTitle.style.transition = "all 0.3s ease";
                 form.action = `/admin/storage/${docId}/3`;
               } 
               
@@ -62,6 +63,7 @@ function toggleVisibility(elementId, show) {
                 modalText.textContent = "Recover this document?";
                 modalTitle.textContent = "Confirm Recover";
                 modalTitle.style.color = "Orange";
+                modalTitle.style.transition = "all 0.3s ease";
                 form.action = `/admin/storage/${docId}/2`;
               } 
               
@@ -70,6 +72,7 @@ function toggleVisibility(elementId, show) {
                 modalTitle.textContent = "Confirm Deletion";
                 modalText.textContent = "Are you sure you want to delete this document?";
                 modalTitle.style.color = "#8e0404";
+                modalTitle.style.transition = "all 0.3s ease";
                 form.action = `/admin/storage/${docId}/1`;
               }
 

@@ -13,14 +13,14 @@
 
   &.fade-in {
     visibility: visible;
-    transform: scale(1); // Smooth scale-up for fade-in effect
-    transition: visibility 0s 0s, transform 0.5s ease; // Visibility immediately, scale over 0.5s
+    transform: scale(1); 
+    transition: visibility 0s 0s, transform 0.5s ease;
   }
 
   &.fade-out {
-    transform: scale(0.9); // Smooth scale-down for fade-out effect
-    transition: visibility 0s 0.5s, transform 0.5s ease; // Delay visibility change by 0.5s
-    visibility: hidden; // Hide after transition
+    transform: scale(0.9); 
+    transition: visibility 0s 0.5s, transform 0.5s ease; 
+    visibility: hidden; 
   }
 
   .imghere {
@@ -31,4 +31,121 @@
       width: 100px;
     }
   }
+}
+
+
+.paginationlinks {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.pagination-wrapper nav {
+    display: inline-block;
+}
+
+.pagination-wrapper nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 5px;
+}
+
+.pagination-wrapper nav ul li {
+    display: inline-block;
+}
+
+.pagination-wrapper nav ul li a,
+.pagination-wrapper nav ul li span {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    color: #8e04045f;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.pagination-wrapper nav ul li span[aria-current="page"] {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.pz{
+    display: none;
+    align-items: center;
+    gap: 5px;
+}
+
+.pzinput[type="number"] {
+    width: 60px;
+    padding: 4px;
+    font-size: 14px;
+}
+
+.pzbutton {
+    padding: 4px 10px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pzbutton:hover {
+    background-color: #0056b3;
+}
+
+.small, .d-flex {
+  display: none;
+}
+
+li a {
+  border: #8e0404 1px solid !important;
+  color: #8e0404 !important;
+}
+
+select {
+  height: 38px;
+  padding-top: 9px;
+  padding-bottom: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+
+  option {
+    cursor: pointer;
+  }
+}
+
+select:focus {
+  outline: none;
+}
+
+.atayaaa {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: none;
+  display: flex;
+  align-items: center;
+  color: white;
+  background-color: #8e0404;
+  cursor: pointer;
+  height: 38px;
+
+  .esbiji {
+    margin: 0;
+  }
+}
+
+.atayaaa:hover {
+  background-color: #ac0b0b;
+}
+
+.asd25 {
+  margin-right: auto;
 }

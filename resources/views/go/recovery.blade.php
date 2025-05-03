@@ -50,7 +50,7 @@
                         <img src="{{asset('imgs/dara.png')}}" alt="" style="height: 25px;">
                     </a>
                 
-                @include ('layouts/search_material/search_bar');
+                @include ('layouts/search_material/search_bar')
                 
             </div>
         </header>

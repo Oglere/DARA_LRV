@@ -217,9 +217,9 @@
                                     <span>Total Studies in the Database</span>
                                 </p>
                                 <p class="ms-auto d-flex flex-column text-end">
-                                    <span class="{{ $percentChange >= 0 ? 'text-success' : 'text-danger' }}">
-                                        <i class="bi {{ $percentChange >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' }}"></i> 
-                                        {{ number_format($percentChange) }}
+                                    <span class="{{ $numberChange >= 0 ? 'text-success' : 'text-danger' }}">
+                                        <i class="bi {{ $numberChange >= 0 ? 'bi-arrow-up' : 'bi-arrow-down' }}"></i> 
+                                        {{ number_format($numberChange) }}
                                     </span>
                                     <span class="text-secondary">Since last month</span>
                                 </p>
@@ -258,16 +258,17 @@
                                     <th>Last Online</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="recent-users-table">
                                 @foreach ($recentUsersOnline as $user)
                                     <tr>
                                         <td>{{ $user->first_name }} {{ $user->last_name }}</td>
-                                        <td>{{ Carbon::parse($user->last_login)->diffForHumans() }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($user->last_login)->diffForHumans() }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+
                 </div>
 
                 <!-- Footer -->
@@ -368,6 +369,8 @@
         const now = new Date();
         const monthLabels = [];
         const studiesData = Array(8).fill(0);
+
+        console.log(monthLabels);
 
         for (let i = 7; i >= 0; i--) {
             const date = new Date();
@@ -537,4 +540,74 @@
     visitors_chart_options,
     );
     visitors_chart.render();
+</script>
+<script>
+    function updateCharts() {
+        fetch('/dashboard/stats')
+            .then(res => res.json())
+            .then(data => {
+                const newLabels = data.studyDistribution.map(item => item.status);
+                const newCounts = data.studyDistribution.map(item => item.count);
+
+                studyStatusChart.data.labels = newLabels;
+                studyStatusChart.data.datasets[0].data = newCounts;
+                studyStatusChart.update();
+
+                const newStudiesData = Array(8).fill(0);
+                const now = new Date();
+                const labels = [];
+
+                for (let i = 7; i >= 0; i--) {
+                    const date = new Date();
+                    date.setMonth(now.getMonth() - i);
+                    labels.push(date.toLocaleString('default', { month: 'long' }));
+                }
+
+                data.studiesPerMonth.forEach(item => {
+                    const d = new Date();
+                    d.setMonth(item.month - 1);
+                    const name = d.toLocaleString('default', { month: 'long' });
+                    const idx = labels.indexOf(name);
+                    if (idx !== -1) newStudiesData[idx] = item.total;
+                });
+
+                documentOverviewChart.data.labels = labels;
+                documentOverviewChart.data.datasets[0].data = newStudiesData;
+                documentOverviewChart.update();
+            });
+    }
+
+    setInterval(updateCharts, 10000); 
+</script>
+<script>
+    function updateRecentUsers() {
+        fetch('/admin/dashboard/recent-users')
+            .then(res => res.json())
+            .then(users => {
+                const table = document.getElementById('recent-users-table');
+                table.innerHTML = '';
+
+                users.forEach(user => {
+                    const lastLogin = new Date(user.last_login);
+                    const now = new Date();
+                    const diffSeconds = Math.floor((now - lastLogin) / 1000);
+
+                    let timeAgo = '';
+                    if (diffSeconds < 60) timeAgo = `${diffSeconds} seconds ago`;
+                    else if (diffSeconds < 3600) timeAgo = `${Math.floor(diffSeconds / 60)} minutes ago`;
+                    else if (diffSeconds < 86400) timeAgo = `${Math.floor(diffSeconds / 3600)} hours ago`;
+                    else timeAgo = `${Math.floor(diffSeconds / 86400)} days ago`;
+
+                    const row = `
+                        <tr>
+                            <td>${user.first_name} ${user.last_name}</td>
+                            <td>${timeAgo}</td>
+                        </tr>
+                    `;
+                    table.insertAdjacentHTML('beforeend', row);
+                });
+            });
+    }
+
+    setInterval(updateRecentUsers, 10000); 
 </script>

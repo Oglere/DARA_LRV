@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\OTP;
 
+use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -73,8 +74,6 @@ class OtpController extends Controller
     }
 
     public function otp(Request $request) {
-        
-
         $request->validate([
             'otp' => 'required|numeric',
         ]);
@@ -102,16 +101,24 @@ class OtpController extends Controller
         Session::forget(['otp', 'timer']); 
 
         $user = User::where('email', '=', $email)->where('status', 'Active')->first();
-    
+        
+        $editFormHtml = view('admin.show', compact('user'))->render();
         if ($user) {
             Auth::login($user);
             $request->session()->regenerate();
     
             return match ($user->role) {
-                'Admin' => redirect('admin/edit'),
-                'Teacher' => redirect('teacher/edit'),
-                'Student' => redirect('student/edit'),
-                default => back()->withErrors(['Invalid role.'])
+                'Admin' => redirect('admin/edit')
+                    ->withErrors(['Invalid role.'])
+                    ->with('editForm', $editFormHtml),
+                'Teacher' => redirect('teacher/edit')
+                    ->withErrors(['Invalid role.'])
+                    ->with('editForm', $editFormHtml),
+                'Student' => redirect('student/edit')
+                    ->withErrors(['Invalid role.'])
+                    ->with('editForm', $editFormHtml),
+                default => back()
+                    
             };
             
         }

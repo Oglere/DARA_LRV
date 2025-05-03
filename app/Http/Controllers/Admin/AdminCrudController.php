@@ -1,13 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use Illuminate\Routing\Controller;
 use App\Models\DocumentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class AdminCrudController extends Controller
 {
@@ -34,9 +37,40 @@ class AdminCrudController extends Controller
             ? Hash::make($data['password_hash'])
             : Hash::make('defaultpassword');
 
+        $email = $request->email;
+
+        $mail = new PHPMailer(true);
+
         User::create($data);
 
-        return redirect('/admin/user-control')->with('success', 'User created successfully!');
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = env('MAIL_USERNAME');
+            $mail->Password = env('MAIL_PASSWORD');
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            $mail->setFrom(env('MAIL_USERNAME'), 'DARA');
+            $mail->addAddress($email);
+            $mail->Subject = 'Welcome to DARA';
+            $mail->isHTML(true);
+            $mail->Body = "
+                <p>
+                    Hello, $request->first_name $request->last_name
+                    Here's your account details as $request->role: <br> 
+                    <strong>Username:</Strong> $request->usn <br>
+                    <strong>Password:</strong> $request->password_hash 
+                </p>
+            ";
+            $mail->send();
+
+
+            return redirect('/admin/user-control')->with('success', 'User created successfully!');
+        } catch (Exception $e) {
+            return back()->withErrors(['email' => 'Could not send email. Error: ' . $mail->ErrorInfo]);
+        } 
     }
 
     public function edit(Request $request, $id) {

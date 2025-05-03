@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ asset ('css/std_control.css') }}">
     <link rel="stylesheet" href="{{ asset ('css/svg.css') }}">
 </head>
-<body>
+<body style="height: calc(100% - 61px)">
     <main>
         <header> 
             <div class="ahh">

@@ -1,13 +1,13 @@
 <?php
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\OtpController;
+use App\Http\Controllers\OTP\OtpController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AdminCrudController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\QueryController;
-use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\Login\LoginController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminCrudController;
+use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\SearchController\QueryController;
+use App\Http\Controllers\Teacher\TeacherController;
 
 Route::get('/test', function () {
     return view('test');
@@ -38,6 +38,8 @@ Route::middleware(['ensure.recovery', 'prevent-back-history'])->group(function (
 
 Route::prefix('admin')->middleware(['auth', 'admin', 'prevent-back-history'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard']);
+    Route::get('/dashboard/stats', [AdminController::class, 'getDashboardStats']);
+    Route::get('/dashboard/recent-users', [AdminController::class, 'getRecentUsersOnline']);
     Route::get('/user-control', [AdminController::class, 'userControl']);
     Route::get('/edit', [AdminController::class, 'edit']);
     Route::get('/storage', [AdminController::class, 'messages']);

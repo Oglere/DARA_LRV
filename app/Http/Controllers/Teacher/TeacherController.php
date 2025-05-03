@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Teacher;
 
+use GrahamCampbell\ResultType\Success;
+use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DocumentRepository;
 use App\Models\User;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class TeacherController extends Controller
 {
@@ -64,9 +68,37 @@ class TeacherController extends Controller
             $document->date_reviewed = now();
             $document->save();
 
-            return redirect()->back()->with('success', 'Document status updated successfully.');
-        }
+            if ($document->status == 'Approved') {
+                $user = User::where('user_id', '=', $document->student_id)->first();
+                $mail = new PHPMailer(true);
+                
+                try {
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+                    $mail->Username = env('MAIL_USERNAME');
+                    $mail->Password = env('MAIL_PASSWORD');
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port = 587;
+        
+                    $mail->setFrom(env('MAIL_USERNAME'), 'OTP Verification');
+                    $mail->addAddress($user->email);
+                    $mail->Subject = 'Your Study Has Been Approved';
+                    $mail->isHTML(true);
+                    $mail->Body = "<p>Your Study <strong>$document->title</strong> has been approved!</p>";
+                    
+                    
+                    $mail->send();
 
-        return redirect()->back()->with('error', 'Document not found.');
+                    return redirect()->back()->with('success', 'Document status updated successfully.');
+                } catch (Exception $e) {
+                    return back()->withErrors(['email' => 'Could not send email. Error: ' . $mail->ErrorInfo]);
+                }
+            } else {
+                return redirect()->back()->with('success', 'Document status updated successfully.');
+            }
+        } else { 
+            return redirect()->back()->with('error', 'Document not found.');
+        }
     }
 }

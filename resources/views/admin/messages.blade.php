@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="{{asset ('css/mainpage.css')}}">
         <link rel="stylesheet" href="{{asset ('css/std_control.css')}}">
         <link rel="stylesheet" href="{{asset ('css/usercontrol.css')}}">
+        <link rel="stylesheet" href="{{asset ('css/yey.css')}}">
     </head>
     <body style="height: calc(100% - 61px);">
         <main>
@@ -113,18 +114,39 @@
                 </div>
 
                 <div class="right" style="overflow: auto; padding: 20px; display: flex; width: 100%;">
-                    <div class="actions">
-                        <div class="filter-group">
-                            <input type="text" id="search-bar" placeholder="Search studies by title.." oninput="filterUsers()">
-                            <div class="aridiri">
-                                <button class="btn-primary filter-btn" data-role="all">All</button>
-                                <button class="btn-secondary filter-btn" data-role="Approved">Published</button>
-                                <button class="btn-secondary filter-btn" data-role="Pending">Pending</button>
-                                <button class="btn-secondary filter-btn" data-role="Needs Revision">Needs Revision</button>
-                                <button class="btn-secondary filter-btn" data-role="Rejected">Rejected</button>
-                                <button class="btn-secondary filter-btn" data-role="LostDoc">Deleted</button>
-                            </div>
-                        </div>
+                    <div class="actions asd25">
+                        <form method="GET" action="" class="filter-group" style="display: flex; align-items: center;">
+                            <input style="margin: 0; padding: 0; padding-left: 10px; height: calc(38px - 1.33px); border-top-right-radius: 0; border-bottom-right-radius: 0;" type="text" name="search" id="search-bar" placeholder="Search users by name or email..." value="{{ request('search') }}">
+                            
+                            <select name="status" onchange="this.form.submit()">
+                                <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All</option>
+                                <option value="Approved" {{ request('status') == 'Approved' ? 'selected' : '' }}>Published</option>
+                                <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="Needs Revision" {{ request('status') == 'Needs Revision' ? 'selected' : '' }}>Needs Revision</option>
+                                <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                                <option value="LostDoc" {{ request('status') == 'LostDoc' ? 'selected' : '' }}>Deleted</option>
+                            </select>
+
+                            <button class="atayaaa" type="submit">
+                                <svg
+                                    class="esbiji"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="feather feather-search"
+                                >
+                                    <circle cx="11" cy="11" r="8" />
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                </svg>
+                            </button>
+                        </form>
+
                     </div>
                     <table>
                         <thead>
@@ -165,6 +187,20 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    <div class="paginationlinks">
+                        <div class="pagination-wrapper">
+                            {{ $docu->links('pagination::bootstrap-5') }}  {{-- Optional: Bootstrap style --}}
+                        </div>
+
+                        <form class="pz" method="GET" action="{{ url()->current() }}">
+                            <label for="page">Jump to:</label>
+                            <input type="number" name="page" min="1" max="{{ $docu->lastPage() }}">
+                            <button type="submit">Go</button>
+                        </form>
+                    </div>
+
+                    <div class="phn" style="opacity: 0;">.</div>
 
                     <DIV class="overlay hidden"></DIV>
 

@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="{{ asset('CSS/mainpage.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/std_control.css') }}">
         <link rel="stylesheet" href="{{ asset('CSS/usercontrol.css') }}">
-        <link rel="stylesheet" href="{{ asset('../../css/yey.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/yey.css') }}">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body style="overflow: hidden; height: calc(100% - 61px)">
@@ -121,24 +121,22 @@
                 </div>
 
                 <div class="right" style="overflow: auto; padding: 20px;">
-
-                @if (session('success'))
-                    <div class="frbg" style="height: auto;">
-                        <div class="notif" style="display: flex; flex-direction: column; align-items: center;">
-                            <div class="imghere">
-                                <img src="../../imgs/verified-account.png" alt="" />
-                            </div>
-                            <div
-                                class="teksto"
-                                style="display: flex; margin-top: -16px; text-align: center"
-                            >
+                    @if (session('success'))
+                        <div class="frbg" style="height: auto;">
+                            <div class="notif" style="display: flex; flex-direction: column; align-items: center;">
+                                <div class="imghere">
+                                    <img src="../../imgs/verified-account.png" alt="" />
+                                </div>
+                                <div
+                                    class="teksto"
+                                    style="display: flex; margin-top: -16px; text-align: center"
+                                >
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
                     
-                <div id="add-user-form" class="{{ $errors->getBag('createErrors')->any() ? '' : 'hidden' }}">
-
+                    <div id="add-user-form" class="{{ $errors->getBag('createErrors')->any() ? '' : 'hidden' }}">
                         <h2>Add New User</h2>
                         <form id="user-form" method="post" action="create">
                             @csrf
@@ -180,19 +178,41 @@
                             </div>
                         </form>
                     </div>
+                    
                     <div class="overlay {{ $errors->getBag('createErrors')->any() ? '' : 'hidden' }}"></div>
 
                     <div id="user-list">
                         <div class="actions">
-                            <div class="filter-group">
-                                <input type="text" id="search-bar" placeholder="Search users by name or email..." oninput="filterUsers()">
-                                <div class="aridiri">
-                                    <button class="btn-primary filter-btn" data-role="all">All</button>
-                                    <button class="btn-secondary filter-btn" data-role="Admin">Admins</button>
-                                    <button class="btn-secondary filter-btn" data-role="Teacher">Teachers</button>
-                                    <button class="btn-secondary filter-btn" data-role="Student">Students</button>
-                                </div>
-                            </div>
+                            <form method="GET" action="" class="filter-group" style="display: flex; align-items: center;">
+                                <input style="margin: 0; padding: 0; padding-left: 10px; height: calc(38px - 1.33px); border-top-right-radius: 0; border-bottom-right-radius: 0;" type="text" name="search" id="search-bar" placeholder="Search users by name or email..." value="{{ request('search') }}">
+                                
+                                <select name="role" onchange="this.form.submit()">
+                                    <option value="all" {{ request('role') == 'all' ? 'selected' : '' }}>All</option>
+                                    <option value="Admin" {{ request('role') == 'Admin' ? 'selected' : '' }}>Admins</option>
+                                    <option value="Teacher" {{ request('role') == 'Teacher' ? 'selected' : '' }}>Teachers</option>
+                                    <option value="Student" {{ request('role') == 'Student' ? 'selected' : '' }}>Students</option>
+                                </select>
+
+                                <button class="atayaaa" type="submit">
+                                    <svg
+                                        class="esbiji"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="feather feather-search"
+                                    >
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg>
+                                </button>
+                            </form>
+
                             <button id="add-user-btn" class="adda">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -215,6 +235,7 @@
                                 Add New User
                             </button>
                         </div>
+                        
                         <table>
                             <thead>
                                 <tr>
@@ -248,6 +269,21 @@
                             @endforeach
                             </tbody>
                         </table>
+
+                        <div class="paginationlinks">
+                            <div class="pagination-wrapper">
+                                {{ $org->links('pagination::bootstrap-5') }}  {{-- Optional: Bootstrap style --}}
+                            </div>
+
+                            <form class="pz" method="GET" action="{{ url()->current() }}">
+                                <label for="page">Jump to:</label>
+                                <input type="number" name="page" min="1" max="{{ $org->lastPage() }}">
+                                <button type="submit">Go</button>
+                            </form>
+                        </div>
+
+                        <div class="phn" style="opacity: 0;">.</div>
+
                     </div>
 
                     <div id="delete-modal" class="modal hidden">

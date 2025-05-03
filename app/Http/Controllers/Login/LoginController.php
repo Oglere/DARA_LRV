@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Login;
 use App\Models\User;
 
+use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -44,7 +45,7 @@ class LoginController extends Controller
             };
             
         } else {
-            return back()->withErrors(['Error' => 'Error']);
+            return back()->withErrors(['Error' => 'Invalid credentials.']);
         }
     
     }

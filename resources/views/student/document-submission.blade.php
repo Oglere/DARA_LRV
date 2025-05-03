@@ -152,7 +152,7 @@
                             <option value="{{ $t->user_id }}">{{ $t->first_name }} {{ $t->last_name }}</option>
                         @endforeach
                     </select><br>
-                    Publication Date: <input type="date" name="publication_date"><br>
+                    Submission Date: <input type="date" name="publication_date"><br>
                     Citations (comma-separated): <input type="text" name="citations"><br>
 
                     <div class="container">

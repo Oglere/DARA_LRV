@@ -36,6 +36,7 @@
 
 .hidden {
   display: none;
+  transition: all 0.3s ease;
 }
 
 table {
@@ -89,6 +90,9 @@ table th {
 
 #user-list {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 svg {
@@ -103,6 +107,7 @@ svg {
 }
 
 table {
+  margin-bottom: 30px;
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
@@ -281,6 +286,7 @@ table th {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
+  transition: all ease 0.3s
 }
 
 .modal-content {
@@ -357,5 +363,11 @@ table th {
   .filter-btn {
     margin-right: 9px;
     margin-top: 10px;
+  }
+}
+
+@media (max-height: 600px) {
+  .tree {
+    scale: 90%;
   }
 }

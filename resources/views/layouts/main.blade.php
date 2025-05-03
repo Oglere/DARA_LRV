@@ -10,7 +10,7 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
     <form id="searchForm" action="/results" method="get">
         @csrf
         <div class="search">
-            <input id="search" name="search" type="text" placeholder="Search...">
+            <input id="search" name="search" type="text" placeholder="Search by Title or Keywords...">
             <button type="submit">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -60,6 +60,9 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
                     </div>
                     <div class="midtag"></div>
                     <div class="righttag">
+                        <div class="texta" style="width: 100%;">
+                            Search by Categories:
+                        </div>
                         <div class="chkbx">
                             <input class="w3-check" type="checkbox" name="document_types[]" value="Case Study">
                             <label class="tada">Case Study</label> 

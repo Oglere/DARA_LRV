@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/usercontrol.css') }}">
     <link rel="stylesheet" href="{{ asset('css/atayaanioy.css') }}">
 </head>
-<body style="overflow: hidden;">
+<body style="overflow: hidden; height: 100%">
     <main>
         <header>
             <div class="ahh">
@@ -124,7 +124,7 @@
                 </nav>
             </div>
 
-            <div class="right" style="overflow: auto; padding: 20px;">
+            <div class="right" style="overflow: auto; padding: 20px; height: calc(100vh - 101px);">
                 <div id="edit-account-section">
                     <div id="verify-user" class="VYI">
                         <h2>VERIFY YOUR IDENTITY</h2>

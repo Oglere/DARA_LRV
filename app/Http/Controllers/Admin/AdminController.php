@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use Illuminate\Routing\Controller;
 use App\Models\DocumentRepository;
 use App\Models\Notification_logs;
 use Illuminate\Http\Request;
@@ -25,9 +26,13 @@ class AdminController extends Controller
             now()->subMonth()->endOfMonth()
         ])->count();
 
-        $percentChange = $previousMonthStudies > 0 
-            ? (($totalStudies - $previousMonthStudies) / $previousMonthStudies)
-            : 0;
+        $currentMonthStudies = DocumentRepository::whereBetween('date_submitted', [
+            now()->startOfMonth(),
+            now()->endOfMonth()
+        ])->count();
+        
+        $numberChange = $currentMonthStudies - $previousMonthStudies;
+        $numberChange = $numberChange > 0 ? $numberChange : 0;
 
         $recentUsersOnline = User::whereNotNull('last_login')
             ->orderBy('last_login', 'desc')
@@ -86,7 +91,7 @@ class AdminController extends Controller
 
         return view("admin.dashboard", compact(
             'totalUsers', 'totalMsgs', 'totalStudies',
-            'previousMonthStudies', 'percentChange', 'recentUsersOnline',
+            'previousMonthStudies', 'numberChange', 'recentUsersOnline',
             'studyDistribution', 'studiesPerMonth', 'months', 'published', 'unpublished', 'totalSpaceFormatted',
         ));
     }
@@ -105,44 +110,63 @@ class AdminController extends Controller
         }
     }
 
-    public function userControl() {
-        $totalMsgs = Notification_logs::where('is_checked', '=', '1')->count();
-
+    public function userControl(Request $request) {
         $adminId = Auth::id();
-        $org = User::where('user_id', '!=', $adminId)
-                    ->where('status', '!=', 'Deleted')
-                    ->get();
-
-        $roles = User::select('role')->distinct()->pluck('role');
-        $statuses = User::select('status')->distinct()->pluck('status');
-
-        return view("admin.user-control", [
-            "org"=> $org, 
-            "roles" => $roles, 
-            "statuses" => $statuses,
-            "totalMsgs" => $totalMsgs,
+        $search = $request->input('search');
+        $role = $request->input('role');
+    
+        $query = User::where('user_id', '!=', $adminId)
+                     ->where('status', '!=', 'Deleted');
+    
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%$search%")
+                  ->orWhere('last_name', 'like', "%$search%")
+                  ->orWhere('email', 'like', "%$search%");
+            });
+        }
+    
+        if ($role && $role !== 'all') {
+            $query->where('role', $role);
+        }
+    
+        $org = $query->paginate(10)->withQueryString();
+    
+        return view('admin.user-control', [
+            'org' => $org,
+            'roles' => User::select('role')->distinct()->pluck('role'),
+            'statuses' => User::select('status')->distinct()->pluck('status'),
+            'totalMsgs' => Notification_logs::where('is_checked', 1)->count(),
         ]);
     }
 
     public function edit() {
-        $totalMsgs = Notification_logs::where('is_checked', '=', '1')->count();
 
-        return view("admin.edit", [
-            "totalMsgs" => $totalMsgs,
-        ]);
+        return view("admin.edit");
     }
     
-    public function messages() {
-        $documents = DocumentRepository::query()
-            ->where('status', '!=', '0')
-            ->get();
-        
-        foreach ($documents as $doc) {
-            $doc->formatted_size = $this->formatSizeUnits(strlen($doc->file)); // or use OCTET_LENGTH if file is in DB
+    public function messages(Request $request) {
+        $search = $request->input('search');
+        $status = $request->input('status');
+    
+        $query = DocumentRepository::query()->where('status', '!=', '0');
+    
+        if ($search) {
+            $query->where('title', 'like', '%' . $search . '%');
         }
+    
+        if ($status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+    
+        $documents = $query->paginate(10)->withQueryString(); 
+    
+        foreach ($documents as $doc) {
+            $doc->formatted_size = $this->formatSizeUnits(strlen($doc->file));
+        }
+    
         return view('admin.messages', ['docu' => $documents]);
     }
-
     
 
     public function markAsDone(Request $request){
@@ -187,4 +211,35 @@ class AdminController extends Controller
             'pdf_data' => $document->file,  
         ]);
     }
+
+    public function getDashboardStats() {
+        $studyDistribution = DocumentRepository::select('status', DB::raw('count(*) as count'))
+            ->where('status', '!=', '0')
+            ->groupBy('status')
+            ->get();
+
+        $studiesPerMonth = DocumentRepository::select(
+            DB::raw('MONTH(date_submitted) as month'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->where('date_submitted', '>=', now()->subMonths(8))
+            ->groupBy('month')
+            ->orderBy('month', 'asc')
+            ->get();
+
+        return response()->json([
+            'studyDistribution' => $studyDistribution,
+            'studiesPerMonth' => $studiesPerMonth
+        ]);
+    }
+
+    public function getRecentUsersOnline() {
+        $recentUsersOnline = User::whereNotNull('last_login')
+            ->orderBy('last_login', 'desc')
+            ->take(5)
+            ->get(['first_name', 'last_name', 'last_login']);
+
+        return response()->json($recentUsersOnline);
+    }
+
 }

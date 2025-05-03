@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SearchController;
 
+use Illuminate\Routing\Controller;
 use Hamcrest\Core\IsNot;
 use Illuminate\Http\Request;
 use App\Models\DocumentRepository;
@@ -18,9 +19,11 @@ class QueryController extends Controller
         $query = DocumentRepository::query()
             ->select(
                 'document_id',
+                'teacher_id',
                 'student_id',
                 'title',
                 'authors',
+                'date_submitted',
                 'study_type'
             )
             ->selectRaw("YEAR(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.publication_date'))) as publication_year")
