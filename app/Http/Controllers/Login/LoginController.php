@@ -30,19 +30,24 @@ class LoginController extends Controller
             'password_hash_login' => 'required'
         ]);
     
-        $user = User::where('usn', $incomingFields['usn_login'])->where('status', 'Active')->first();
+        $user = User::where('usn', $incomingFields['usn_login'])->first();
     
         if ($user && Hash::check($incomingFields['password_hash_login'], $user->password_hash)) {
-            Auth::login($user);
-            $request->session()->regenerate();
-    
-            // Role-based redirection
-            return match ($user->role) {
-                'Admin' => redirect('admin'),
-                'Teacher' => redirect('teacher'),
-                'Student' => redirect('student'),
-                default => back()->withErrors(['Error' => 'Invalid role'])
-            };
+            if ($user->status == "Deleted") {
+                return back()->withErrors(['Error' => 'Account suspended.']);
+            } else {
+                Auth::login($user);
+                $request->session()->regenerate();
+        
+                // Role-based redirection
+                return match ($user->role) {
+                    'Admin' => redirect('admin'),
+                    'Teacher' => redirect('teacher'),
+                    'Student' => redirect('student'),
+                    default => back()->withErrors(['Error' => 'Invalid role'])
+                };
+            }
+            
             
         } else {
             return back()->withErrors(['Error' => 'Invalid credentials.']);

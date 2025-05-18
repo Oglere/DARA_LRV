@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="ubos">
-                    <button type="submit">L O G I N</button>
+                    <button name="submitlogin" type="submit">L O G I N</button>
 
                     @if (session('error'))
                         

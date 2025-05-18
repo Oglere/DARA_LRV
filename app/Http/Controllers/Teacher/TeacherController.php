@@ -87,7 +87,6 @@ class TeacherController extends Controller
                     $mail->isHTML(true);
                     $mail->Body = "<p>Your Study <strong>$document->title</strong> has been approved!</p>";
                     
-                    
                     $mail->send();
 
                     return redirect()->back()->with('success', 'Document status updated successfully.');

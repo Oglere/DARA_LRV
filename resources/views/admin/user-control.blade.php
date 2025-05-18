@@ -173,7 +173,7 @@
                                 <input style="display: none;" name="status" value="Active" required>
                             </div>
                             <div class="botoning">
-                                <button class="sab">Add</button>
+                                <button name="addead" class="sab">Add</button>
                                 <button type="button" class="nac" id="cancel-add">Cancel</button>
                             </div>
                         </form>
@@ -375,7 +375,7 @@
                                 </select>
 
                                 <div class="botoning">
-                                    <button type="submit" class="sab">Save</button>
+                                    <button type="submit" name="edita" class="sab">Save</button>
                                     <button type="button" id="cancel-edit" class="nac">Cancel</button>
                                 </div>
                             </form>
